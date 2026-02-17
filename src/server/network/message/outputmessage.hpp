@@ -1,6 +1,6 @@
 /**
  * Canary - A free and open-source MMORPG server emulator
- * Copyright (©) 2019-2024 OpenTibiaBR <opentibiabr@outlook.com>
+ * Copyright (©) 2019–present OpenTibiaBR <opentibiabr@outlook.com>
  * Repository: https://github.com/opentibiabr/canary
  * License: https://github.com/opentibiabr/canary/blob/main/LICENSE
  * Contributors: https://github.com/opentibiabr/canary/graphs/contributors
@@ -11,24 +11,30 @@
 
 #include "server/network/message/networkmessage.hpp"
 #include "server/network/connection/connection.hpp"
-#include "utils/tools.hpp"
 
 class Protocol;
 
 class OutputMessage : public NetworkMessage {
 public:
 	OutputMessage() = default;
+	virtual ~OutputMessage() = default;
 
 	// non-copyable
 	OutputMessage(const OutputMessage &) = delete;
 	OutputMessage &operator=(const OutputMessage &) = delete;
 
 	uint8_t* getOutputBuffer() {
-		return buffer + outputBufferStart;
+		return buffer.data() + outputBufferStart;
+	}
+
+	void writePaddingAmount() {
+		uint8_t paddingAmount = 8 - (info.length % 8) - 1;
+		addPaddingBytes(paddingAmount);
+		add_header(paddingAmount);
 	}
 
 	void writeMessageLength() {
-		add_header(info.length);
+		add_header(static_cast<uint16_t>((info.length - 4) / 8));
 	}
 
 	void addCryptoHeader(bool addChecksum, uint32_t checksum) {
@@ -41,14 +47,20 @@ public:
 
 	void append(const NetworkMessage &msg) {
 		auto msgLen = msg.getLength();
-		memcpy(buffer + info.position, msg.getBuffer() + INITIAL_BUFFER_POSITION, msgLen);
+		if (std::memcpy(buffer.data() + info.position, msg.getBuffer() + INITIAL_BUFFER_POSITION, msgLen) == nullptr) {
+			g_logger().error("[{}] memcpy failed while appending message", __FUNCTION__);
+			return;
+		}
 		info.length += msgLen;
 		info.position += msgLen;
 	}
 
 	void append(const OutputMessage_ptr &msg) {
 		auto msgLen = msg->getLength();
-		memcpy(buffer + info.position, msg->getBuffer() + INITIAL_BUFFER_POSITION, msgLen);
+		if (std::memcpy(buffer.data() + info.position, msg->getBuffer() + INITIAL_BUFFER_POSITION, msgLen) == nullptr) {
+			g_logger().error("[{}] memcpy failed while appending output message", __FUNCTION__);
+			return;
+		}
 		info.length += msgLen;
 		info.position += msgLen;
 	}
@@ -61,10 +73,22 @@ private:
 			return;
 		}
 
+		// Ensure at runtime that outputBufferStart >= sizeof(T)
 		assert(outputBufferStart >= sizeof(T));
+		// Move the buffer position back to make space for the header
 		outputBufferStart -= sizeof(T);
-		memcpy(buffer + outputBufferStart, &addHeader, sizeof(T));
-		// added header size to the message size
+
+		static_assert(std::is_trivially_copyable_v<T>, "Type T must be trivially copyable");
+
+		// Convert the header to an array of unsigned char using std::bit_cast
+		auto byteArray = std::bit_cast<std::array<unsigned char, sizeof(T)>>(addHeader);
+
+		// Copy the bytes into the buffer
+		if (std::memcpy(buffer.data() + outputBufferStart, byteArray.data(), byteArray.size()) == nullptr) {
+			g_logger().error("[{}] memcpy failed while adding header", __FUNCTION__);
+			return;
+		}
+		// Update the message size
 		info.length += sizeof(T);
 	}
 
@@ -79,16 +103,14 @@ public:
 	OutputMessagePool(const OutputMessagePool &) = delete;
 	OutputMessagePool &operator=(const OutputMessagePool &) = delete;
 
-	static OutputMessagePool &getInstance() {
-		return inject<OutputMessagePool>();
-	}
+	static OutputMessagePool &getInstance();
 
 	void sendAll();
 	void scheduleSendAll();
 
 	static OutputMessage_ptr getOutputMessage();
 
-	void addProtocolToAutosend(Protocol_ptr protocol);
+	void addProtocolToAutosend(const Protocol_ptr &protocol);
 	void removeProtocolFromAutosend(const Protocol_ptr &protocol);
 
 private:

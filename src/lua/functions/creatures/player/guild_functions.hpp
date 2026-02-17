@@ -1,6 +1,6 @@
 /**
  * Canary - A free and open-source MMORPG server emulator
- * Copyright (©) 2019-2024 OpenTibiaBR <opentibiabr@outlook.com>
+ * Copyright (©) 2019–present OpenTibiaBR <opentibiabr@outlook.com>
  * Repository: https://github.com/opentibiabr/canary
  * License: https://github.com/opentibiabr/canary/blob/main/LICENSE
  * Contributors: https://github.com/opentibiabr/canary/graphs/contributors
@@ -9,28 +9,9 @@
 
 #pragma once
 
-#include "lua/scripts/luascript.hpp"
-
-class GuildFunctions final : LuaScriptInterface {
+class GuildFunctions {
 public:
-	static void init(lua_State* L) {
-		registerSharedClass(L, "Guild", "", GuildFunctions::luaGuildCreate);
-		registerMetaMethod(L, "Guild", "__eq", GuildFunctions::luaUserdataCompare);
-
-		registerMethod(L, "Guild", "getId", GuildFunctions::luaGuildGetId);
-		registerMethod(L, "Guild", "getName", GuildFunctions::luaGuildGetName);
-		registerMethod(L, "Guild", "getMembersOnline", GuildFunctions::luaGuildGetMembersOnline);
-
-		registerMethod(L, "Guild", "getBankBalance", GuildFunctions::luaGuildGetBankBalance);
-		registerMethod(L, "Guild", "setBankBalance", GuildFunctions::luaGuildSetBankBalance);
-
-		registerMethod(L, "Guild", "addRank", GuildFunctions::luaGuildAddRank);
-		registerMethod(L, "Guild", "getRankById", GuildFunctions::luaGuildGetRankById);
-		registerMethod(L, "Guild", "getRankByLevel", GuildFunctions::luaGuildGetRankByLevel);
-
-		registerMethod(L, "Guild", "getMotd", GuildFunctions::luaGuildGetMotd);
-		registerMethod(L, "Guild", "setMotd", GuildFunctions::luaGuildSetMotd);
-	}
+	static void init(lua_State* L);
 
 private:
 	static int luaGuildCreate(lua_State* L);

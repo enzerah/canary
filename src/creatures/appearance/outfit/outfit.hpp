@@ -1,6 +1,6 @@
 /**
  * Canary - A free and open-source MMORPG server emulator
- * Copyright (©) 2019-2024 OpenTibiaBR <opentibiabr@outlook.com>
+ * Copyright (©) 2019–present OpenTibiaBR <opentibiabr@outlook.com>
  * Repository: https://github.com/opentibiabr/canary
  * License: https://github.com/opentibiabr/canary/blob/main/LICENSE
  * Contributors: https://github.com/opentibiabr/canary/graphs/contributors
@@ -9,9 +9,7 @@
 
 #pragma once
 
-#include "declarations.hpp"
-#include "lib/di/container.hpp"
-
+enum PlayerSex_t : uint8_t;
 class Player;
 
 struct OutfitEntry {
@@ -50,10 +48,7 @@ public:
 	bool loadFromXml();
 
 	[[nodiscard]] std::shared_ptr<Outfit> getOutfitByLookType(const std::shared_ptr<const Player> &player, uint16_t lookType, bool isOppositeOutfit = false) const;
-	[[nodiscard]] const std::vector<std::shared_ptr<Outfit>> &getOutfits(PlayerSex_t sex) const {
-		return outfits[sex];
-	}
+	[[nodiscard]] const std::vector<std::shared_ptr<Outfit>> &getOutfits(PlayerSex_t sex) const;
 
-private:
-	std::vector<std::shared_ptr<Outfit>> outfits[PLAYERSEX_LAST + 1];
+	std::shared_ptr<Outfit> getOutfitByName(PlayerSex_t sex, const std::string &name) const;
 };

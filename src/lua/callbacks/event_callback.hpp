@@ -1,6 +1,6 @@
 /**
  * Canary - A free and open-source MMORPG server emulator
- * Copyright (©) 2019-2024 OpenTibiaBR <opentibiabr@outlook.com>
+ * Copyright (©) 2019–present OpenTibiaBR <opentibiabr@outlook.com>
  * Repository: https://github.com/opentibiabr/canary
  * License: https://github.com/opentibiabr/canary/blob/main/LICENSE
  * Contributors: https://github.com/opentibiabr/canary/graphs/contributors
@@ -9,11 +9,16 @@
 
 #pragma once
 
+#ifndef USE_PRECOMPILED_HEADERS
+	#include <algorithm>
+	#include <functional>
+	#include <type_traits>
+	#include <utility>
+	#include <vector>
+#endif
+
 #include "lua/callbacks/callbacks_definitions.hpp"
-#include "creatures/creatures_definitions.hpp"
-#include "items/items_definitions.hpp"
-#include "utils/utils_definitions.hpp"
-#include "lua/scripts/scripts.hpp"
+#include "lua/scripts/luascript.hpp"
 
 class Creature;
 class Player;
@@ -22,6 +27,26 @@ class Party;
 class ItemType;
 class Monster;
 class Zone;
+class Thing;
+class Item;
+class Cylinder;
+class Npc;
+class Container;
+
+struct lua_State;
+struct Position;
+struct CombatDamage;
+struct Outfit_t;
+
+enum Direction : uint8_t;
+enum ReturnValue : uint16_t;
+enum SpeakClasses : uint8_t;
+enum Slots_t : uint8_t;
+enum ZoneType_t : uint8_t;
+enum skills_t : int8_t;
+enum CombatType_t : uint8_t;
+enum CombatOrigin : uint8_t;
+enum TextColor_t : uint8_t;
 
 /**
  * @class EventCallback
@@ -31,108 +56,236 @@ class Zone;
  * registration, and execution of custom behavior tied to specific game events.
  * @note It inherits from the Script class, providing scripting capabilities.
  */
-class EventCallback : public Script {
+class EventCallback {
 private:
 	EventCallback_t m_callbackType = EventCallback_t::none; ///< The type of the event callback.
 	std::string m_scriptTypeName; ///< The name associated with the script type.
+	std::string m_callbackName; ///< The name of the callback.
+	bool m_skipDuplicationCheck = false; ///< Whether the callback is silent error for already registered log error.
+
+	int32_t m_scriptId { kInvalidScriptId };
+	bool m_enabled = true;
+	int32_t m_priority = 0;
+	LuaScriptInterface* m_scriptInterface = nullptr; ///< Non-owning pointer to script interface.
+
+	struct DamageRef {
+		CombatDamage* damage;
+		int registryIndex;
+	};
+
+	template <typename ArgT>
+	static void pushCallbackArgument(lua_State* L, ArgT &&arg, std::vector<DamageRef> &damageRefs, int &argc);
+	static void pushDamageReference(lua_State* L, CombatDamage &damage, std::vector<DamageRef> &damageRefs, int &argc);
+	static void applyDamageReferences(lua_State* L, const std::vector<DamageRef> &damageRefs);
+	static void updateDamageEntry(lua_State* L, int index, const char* field, CombatType_t &type, int32_t &value);
+	static void updateDamageOrigin(lua_State* L, int index, CombatOrigin &origin);
+	static void updateDamageCritical(lua_State* L, int index, bool &critical);
+	template <typename T>
+	static void updateNumberField(lua_State* L, int index, const char* field, T &value);
+	static void updateBooleanField(lua_State* L, int index, const char* field, bool &value);
+
+	static void pushArgument(lua_State* L, const std::shared_ptr<Player> &player);
+	static void pushArgument(lua_State* L, const std::shared_ptr<Item> &item);
+	static void pushArgument(lua_State* L, const std::shared_ptr<Creature> &creature);
+	static void pushArgument(lua_State* L, const std::shared_ptr<Party> &party);
+	static void pushArgument(lua_State* L, const std::shared_ptr<Monster> &monster);
+	static void pushArgument(lua_State* L, const std::shared_ptr<Container> &container);
+	static void pushArgument(lua_State* L, const std::shared_ptr<Zone> &zone);
+	static void pushArgument(lua_State* L, const std::shared_ptr<Tile> &tile);
+	static void pushArgument(lua_State* L, const std::shared_ptr<Thing> &thing);
+	static void pushArgument(lua_State* L, const std::shared_ptr<Cylinder> &cylinder);
+	static void pushArgument(lua_State* L, const ItemType* itemType);
+	static void pushArgument(lua_State* L, CombatDamage &damage);
+	static void pushArgument(lua_State* L, const Position &position);
+	static void pushArgument(lua_State* L, const Outfit_t &outfit);
+	static void pushArgument(lua_State* L, const std::string &value);
+	static void pushArgument(lua_State* L, int32_t value);
+	static void pushArgument(lua_State* L, uint32_t value);
+	static void pushArgument(lua_State* L, uint64_t value);
+	static void pushArgument(lua_State* L, uint8_t value);
+	static void pushArgument(lua_State* L, std::reference_wrapper<CombatDamage> value);
+	static void pushArgument(lua_State* L, bool value);
+	static void pushArgument(lua_State* L, Direction value);
+	static void pushArgument(lua_State* L, ReturnValue value);
+	static void pushArgument(lua_State* L, SpeakClasses value);
+	static void pushArgument(lua_State* L, Slots_t value);
+	static void pushArgument(lua_State* L, ZoneType_t value);
+	static void pushArgument(lua_State* L, skills_t value);
+	static void pushArgument(lua_State* L, CombatType_t value);
+	static void pushArgument(lua_State* L, TextColor_t value);
 
 public:
+	static constexpr int32_t kInvalidScriptId = -1;
+
+	explicit EventCallback(const std::string &callbackName, bool skipDuplicationCheck, LuaScriptInterface* interface = nullptr);
+
+	[[nodiscard]] LuaScriptInterface* getScriptInterface() const noexcept;
+	bool loadScriptId();
+	[[nodiscard]] int32_t getScriptId() const noexcept;
+	void setScriptId(int32_t newScriptId) noexcept;
+	[[nodiscard]] bool isLoadedScriptId() const noexcept;
+	[[nodiscard]] bool canExecute() const;
+
+	void setEnabled(bool enabled) noexcept {
+		m_enabled = enabled;
+	}
+	[[nodiscard]] bool isEnabled() const noexcept {
+		return m_enabled;
+	}
+
+	void setPriority(int32_t priority) noexcept {
+		m_priority = std::clamp(priority, -1000, 1000);
+	}
+	[[nodiscard]] int32_t getPriority() const noexcept {
+		return m_priority;
+	}
+
+	template <typename... Args>
+	[[nodiscard]] bool execute(Args &&... args) const;
+
 	/**
-	 * @brief Constructor that initializes the EventCallback with a given script interface.
-	 * @param scriptInterface Pointer to the LuaScriptInterface object.
+	 * @brief Retrieves the callback name.
+	 * @return The callback name as a string.
 	 */
-	explicit EventCallback(LuaScriptInterface* scriptInterface);
+	[[nodiscard]] std::string getName() const;
+
+	/**
+	 * @brief Retrieves the skip registration status of the callback.
+	 * @return True if the callback is true for skip duplication check and register again the event, false otherwise.
+	 */
+	[[nodiscard]] bool skipDuplicationCheck() const;
+
+	/**
+	 * @brief Sets the skip duplication check status for the callback.
+	 * @param skip True to skip duplication check, false otherwise.
+	 */
+	void setSkipDuplicationCheck(bool skip);
 
 	/**
 	 * @brief Retrieves the script type name.
 	 * @return The script type name as a string.
 	 */
-	std::string getScriptTypeName() const override;
+	[[nodiscard]] std::string getScriptTypeName() const;
 
 	/**
 	 * @brief Sets a new script type name.
 	 * @param newName The new name to set for the script type.
 	 */
-	void setScriptTypeName(const std::string_view newName);
+	void setScriptTypeName(std::string_view newName);
 
 	/**
 	 * @brief Retrieves the type of the event callback.
 	 * @return The type of the event callback as defined in the EventCallback_t enumeration.
 	 */
-	EventCallback_t getType() const;
+	[[nodiscard]] EventCallback_t getType() const;
 
 	/**
 	 * @brief Sets the type of the event callback.
 	 * @param type The new type to set, as defined in the EventCallback_t enumeration.
 	 */
 	void setType(EventCallback_t type);
-
-	/**
-	 * @defgroup EventCallbacks Event Callback Functions
-	 * @brief These functions are called in response to specific game events.
-	 *
-	 * These functions serve as the entry points for various event types in the game. They are triggered by specific game events related to Creatures, Players, Parties, Monsters, and NPCs. Depending on the event, different parameters are passed to these functions, allowing custom behavior to be defined for each event type.
-	 *
-	 * The functions may return a boolean value or be void. Boolean-returning functions allow for conditional control over the execution of associated actions on the C++ side, while void functions simply execute the custom behavior without altering the flow of the program.
-	 *
-	 * @note here start the lua binder functions {
-	 */
-
-	// Creature
-	bool creatureOnChangeOutfit(std::shared_ptr<Creature> creature, const Outfit_t &outfit) const;
-	ReturnValue creatureOnAreaCombat(std::shared_ptr<Creature> creature, std::shared_ptr<Tile> tile, bool aggressive) const;
-	ReturnValue creatureOnTargetCombat(std::shared_ptr<Creature> creature, std::shared_ptr<Creature> target) const;
-	void creatureOnHear(std::shared_ptr<Creature> creature, std::shared_ptr<Creature> speaker, const std::string &words, SpeakClasses type) const;
-	void creatureOnDrainHealth(std::shared_ptr<Creature> creature, std::shared_ptr<Creature> attacker, CombatType_t &typePrimary, int32_t &damagePrimary, CombatType_t &typeSecondary, int32_t &damageSecondary, TextColor_t &colorPrimary, TextColor_t &colorSecondary) const;
-
-	// Party
-	bool partyOnJoin(std::shared_ptr<Party> party, std::shared_ptr<Player> player) const;
-	bool partyOnLeave(std::shared_ptr<Party> party, std::shared_ptr<Player> player) const;
-	bool partyOnDisband(std::shared_ptr<Party> party) const;
-	void partyOnShareExperience(std::shared_ptr<Party> party, uint64_t &exp) const;
-
-	// Player
-	bool playerOnBrowseField(std::shared_ptr<Player> player, const Position &position) const;
-	void playerOnLook(std::shared_ptr<Player> player, const Position &position, std::shared_ptr<Thing> thing, uint8_t stackpos, int32_t lookDistance) const;
-	void playerOnLookInBattleList(std::shared_ptr<Player> player, std::shared_ptr<Creature> creature, int32_t lookDistance) const;
-	void playerOnLookInTrade(std::shared_ptr<Player> player, std::shared_ptr<Player> partner, std::shared_ptr<Item> item, int32_t lookDistance) const;
-	bool playerOnLookInShop(std::shared_ptr<Player> player, const ItemType* itemType, uint8_t count) const;
-	bool playerOnMoveItem(std::shared_ptr<Player> player, std::shared_ptr<Item> item, uint16_t count, const Position &fromPosition, const Position &toPosition, std::shared_ptr<Cylinder> fromCylinder, std::shared_ptr<Cylinder> toCylinder) const;
-	void playerOnItemMoved(std::shared_ptr<Player> player, std::shared_ptr<Item> item, uint16_t count, const Position &fromPosition, const Position &toPosition, std::shared_ptr<Cylinder> fromCylinder, std::shared_ptr<Cylinder> toCylinder) const;
-	void playerOnChangeZone(std::shared_ptr<Player> player, ZoneType_t zone) const;
-	bool playerOnMoveCreature(std::shared_ptr<Player> player, std::shared_ptr<Creature> creature, const Position &fromPosition, const Position &toPosition) const;
-	void playerOnReportRuleViolation(std::shared_ptr<Player> player, const std::string &targetName, uint8_t reportType, uint8_t reportReason, const std::string &comment, const std::string &translation) const;
-	void playerOnReportBug(std::shared_ptr<Player> player, const std::string &message, const Position &position, uint8_t category) const;
-	bool playerOnTurn(std::shared_ptr<Player> player, Direction direction) const;
-	bool playerOnTradeRequest(std::shared_ptr<Player> player, std::shared_ptr<Player> target, std::shared_ptr<Item> item) const;
-	bool playerOnTradeAccept(std::shared_ptr<Player> player, std::shared_ptr<Player> target, std::shared_ptr<Item> item, std::shared_ptr<Item> targetItem) const;
-	void playerOnGainExperience(std::shared_ptr<Player> player, std::shared_ptr<Creature> target, uint64_t &exp, uint64_t rawExp) const;
-	void playerOnLoseExperience(std::shared_ptr<Player> player, uint64_t &exp) const;
-	void playerOnGainSkillTries(std::shared_ptr<Player> player, skills_t skill, uint64_t &tries) const;
-	void playerOnRemoveCount(std::shared_ptr<Player> player, std::shared_ptr<Item> item) const;
-	void playerOnRequestQuestLog(std::shared_ptr<Player> player) const;
-	void playerOnRequestQuestLine(std::shared_ptr<Player> player, uint16_t questId) const;
-	void playerOnStorageUpdate(std::shared_ptr<Player> player, const uint32_t key, const int32_t value, int32_t oldValue, uint64_t currentTime) const;
-	void playerOnCombat(std::shared_ptr<Player> player, std::shared_ptr<Creature> target, std::shared_ptr<Item> item, CombatDamage &damage) const;
-	void playerOnInventoryUpdate(std::shared_ptr<Player> player, std::shared_ptr<Item> item, Slots_t slot, bool equip) const;
-	bool playerOnRotateItem(std::shared_ptr<Player> player, std::shared_ptr<Item> item, const Position &position) const;
-	void playerOnWalk(std::shared_ptr<Player> player, Direction &dir) const;
-
-	// Monster
-	void monsterOnDropLoot(std::shared_ptr<Monster> monster, std::shared_ptr<Container> corpse) const;
-	void monsterPostDropLoot(std::shared_ptr<Monster> monster, std::shared_ptr<Container> corpse) const;
-	void monsterOnSpawn(std::shared_ptr<Monster> monster, const Position &position) const;
-
-	// Npc
-	void npcOnSpawn(std::shared_ptr<Npc> npc, const Position &position) const;
-
-	// Zone
-	bool zoneBeforeCreatureEnter(std::shared_ptr<Zone> zone, std::shared_ptr<Creature> creature) const;
-	bool zoneBeforeCreatureLeave(std::shared_ptr<Zone> zone, std::shared_ptr<Creature> creature) const;
-	void zoneAfterCreatureEnter(std::shared_ptr<Zone> zone, std::shared_ptr<Creature> creature) const;
-	void zoneAfterCreatureLeave(std::shared_ptr<Zone> zone, std::shared_ptr<Creature> creature) const;
-
-	/**
-	 * @note here end the lua binder functions }
-	 */
 };
+
+template <typename... Args>
+[[nodiscard]] bool EventCallback::execute(Args &&... args) const {
+	if (!canExecute()) {
+		return false;
+	}
+	if (!Lua::reserveScriptEnv()) {
+		g_logger().error("[EventCallback::execute] Call stack overflow. Too many lua script calls being nested.");
+		return false;
+	}
+
+	ScriptEnvironment* scriptEnvironment = Lua::getScriptEnv();
+	scriptEnvironment->setScriptId(getScriptId(), getScriptInterface());
+
+	lua_State* L = getScriptInterface()->getLuaState();
+	if (!getScriptInterface()->pushFunction(getScriptId())) {
+		g_logger().error("[EventCallback::execute] Failed to push callback '{}' to the stack", m_callbackName);
+		return false;
+	}
+
+	std::vector<DamageRef> damageRefs;
+	int argc = 0;
+	(pushCallbackArgument(L, std::forward<Args>(args), damageRefs, argc), ...);
+
+	const bool result = getScriptInterface()->callFunction(argc);
+
+	applyDamageReferences(L, damageRefs);
+
+	return result;
+}
+
+template <typename ArgT>
+void EventCallback::pushCallbackArgument(lua_State* L, ArgT &&arg, std::vector<DamageRef> &damageRefs, int &argc) {
+	using ValueT = std::remove_cvref_t<ArgT>;
+	if constexpr (std::is_same_v<ValueT, std::reference_wrapper<CombatDamage>>) {
+		pushDamageReference(L, arg.get(), damageRefs, argc);
+	} else if constexpr (std::is_same_v<ValueT, CombatDamage>) {
+		auto &damage = const_cast<CombatDamage &>(arg);
+		pushDamageReference(L, damage, damageRefs, argc);
+	} else {
+		pushArgument(L, std::forward<ArgT>(arg));
+		++argc;
+	}
+}
+
+inline void EventCallback::pushDamageReference(lua_State* L, CombatDamage &damage, std::vector<DamageRef> &damageRefs, int &argc) {
+	pushArgument(L, damage);
+	lua_pushvalue(L, -1);
+	const int ref = luaL_ref(L, LUA_REGISTRYINDEX);
+	damageRefs.push_back(DamageRef { &damage, ref });
+	++argc;
+}
+
+inline void EventCallback::applyDamageReferences(lua_State* L, const std::vector<DamageRef> &damageRefs) {
+	for (const auto &entry : damageRefs) {
+		lua_rawgeti(L, LUA_REGISTRYINDEX, entry.registryIndex);
+		if (lua_istable(L, -1)) {
+			const int index = lua_gettop(L);
+			updateDamageEntry(L, index, "primary", entry.damage->primary.type, entry.damage->primary.value);
+			updateDamageEntry(L, index, "secondary", entry.damage->secondary.type, entry.damage->secondary.value);
+			updateDamageOrigin(L, index, entry.damage->origin);
+			updateDamageCritical(L, index, entry.damage->critical);
+		}
+		luaL_unref(L, LUA_REGISTRYINDEX, entry.registryIndex);
+		lua_pop(L, 1);
+	}
+}
+
+inline void EventCallback::updateDamageEntry(lua_State* L, int index, const char* field, CombatType_t &type, int32_t &value) {
+	lua_getfield(L, index, field);
+	if (!lua_istable(L, -1)) {
+		lua_pop(L, 1);
+		return;
+	}
+
+	updateNumberField(L, -1, "value", value);
+	updateNumberField(L, -1, "type", type);
+	lua_pop(L, 1);
+}
+
+inline void EventCallback::updateDamageOrigin(lua_State* L, int index, CombatOrigin &origin) {
+	updateNumberField(L, index, "origin", origin);
+}
+
+inline void EventCallback::updateDamageCritical(lua_State* L, int index, bool &critical) {
+	updateBooleanField(L, index, "critical", critical);
+}
+
+template <typename T>
+void EventCallback::updateNumberField(lua_State* L, int index, const char* field, T &value) {
+	lua_getfield(L, index, field);
+	if (lua_isnumber(L, -1)) {
+		value = Lua::getNumber<T>(L, -1);
+	}
+	lua_pop(L, 1);
+}
+
+inline void EventCallback::updateBooleanField(lua_State* L, int index, const char* field, bool &value) {
+	lua_getfield(L, index, field);
+	if (lua_isboolean(L, -1)) {
+		value = Lua::getBoolean(L, -1);
+	}
+	lua_pop(L, 1);
+}

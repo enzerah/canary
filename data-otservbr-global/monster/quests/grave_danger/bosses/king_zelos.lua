@@ -13,16 +13,17 @@ monster.outfit = {
 	lookMount = 0,
 }
 
-monster.events = {
-	"GraveDangerBossDeath",
-	"zelosDeath",
-}
-
 monster.health = 480000
 monster.maxHealth = 480000
 monster.race = "venom"
 monster.corpse = 31611
 monster.speed = 212
+
+monster.events = {
+	"zelos_damage",
+	"zelos_init",
+	"grave_danger_death",
+}
 
 monster.bosstiary = {
 	bossRaceId = 1784,
@@ -80,6 +81,7 @@ monster.loot = {
 	{ name = "galea mortis", chance = 550 },
 	{ name = "shadow cowl", chance = 530 },
 	{ name = "toga mortis", chance = 500 },
+	{ name = "death oyoroi", chance = 500 },
 }
 
 monster.attacks = {
@@ -121,19 +123,5 @@ monster.voices = {
 	{ text = "I will rule again and my realm of death will span the world!", yell = false },
 	{ text = "My lich-knights will conquer this world for me!", yell = false },
 }
-
-mType.onThink = function(monster, interval) end
-
-mType.onAppear = function(monster, creature)
-	if monster:getType():isRewardBoss() then
-		monster:setReward(true)
-	end
-end
-
-mType.onDisappear = function(monster, creature) end
-
-mType.onMove = function(monster, creature, fromPosition, toPosition) end
-
-mType.onSay = function(monster, creature, type, message) end
 
 mType:register(monster)

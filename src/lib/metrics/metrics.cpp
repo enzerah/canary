@@ -1,14 +1,15 @@
 #ifdef FEATURE_METRICS
 /**
  * Canary - A free and open-source MMORPG server emulator
- * Copyright (©) 2019-2024 OpenTibiaBR <opentibiabr@outlook.com>
+ * Copyright (©) 2019–present OpenTibiaBR <opentibiabr@outlook.com>
  * Repository: https://github.com/opentibiabr/canary
  * License: https://github.com/opentibiabr/canary/blob/main/LICENSE
  * Contributors: https://github.com/opentibiabr/canary/graphs/contributors
  * Website: https://docs.opentibiabr.com/
  */
 
-	#include "metrics.hpp"
+	#include "lib/metrics/metrics.hpp"
+
 	#include "lib/di/container.hpp"
 
 using namespace metrics;
@@ -38,7 +39,7 @@ void Metrics::init(Options opts) {
 		p->AddMetricReader(std::move(prometheusExporter));
 	}
 
-	metrics_api::Provider::SetMeterProvider(std::move(provider));
+	metrics_api::Provider::SetMeterProvider(std::shared_ptr<metrics_api::MeterProvider>(std::move(provider)));
 	initHistograms();
 }
 
@@ -47,7 +48,7 @@ void Metrics::initHistograms() {
 		auto instrumentSelector = metrics_sdk::InstrumentSelectorFactory::Create(metrics_sdk::InstrumentType::kHistogram, name, "us");
 		auto meterSelector = metrics_sdk::MeterSelectorFactory::Create("performance", otelVersion, otelSchema);
 
-		auto aggregationConfig = std::make_unique<metrics_sdk::HistogramAggregationConfig>();
+		auto aggregationConfig = std::make_shared<metrics_sdk::HistogramAggregationConfig>();
 		// TODO: migrate to ExponentialHistogramIndexer when that's available
 		// clang-format off
 		aggregationConfig->boundaries_ = {
@@ -73,7 +74,7 @@ void Metrics::initHistograms() {
 		};
 		// clang-format on
 
-		auto view = metrics_sdk::ViewFactory::Create(name, "Latency", "us", metrics_sdk::AggregationType::kHistogram, std::move(aggregationConfig));
+		auto view = metrics_sdk::ViewFactory::Create(name, "Latency", metrics_sdk::AggregationType::kHistogram, std::move(aggregationConfig));
 		auto provider = metrics_api::Provider::GetMeterProvider();
 		auto* p = static_cast<metrics_sdk::MeterProvider*>(provider.get());
 		p->AddView(std::move(instrumentSelector), std::move(meterSelector), std::move(view));
@@ -87,7 +88,7 @@ void Metrics::shutdown() {
 	metrics_api::Provider::SetMeterProvider(none);
 }
 
-ScopedLatency::ScopedLatency(const std::string_view &name, const std::string &histogramName, const std::string &scopeKey) :
+ScopedLatency::ScopedLatency(std::string_view name, const std::string &histogramName, const std::string &scopeKey) :
 	ScopedLatency(name, g_metrics().latencyHistograms[histogramName], { { scopeKey, std::string(name) } }, g_metrics().defaultContext) {
 	if (histogram == nullptr) {
 		stopped = true;

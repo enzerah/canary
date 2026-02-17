@@ -1,6 +1,6 @@
 /**
  * Canary - A free and open-source MMORPG server emulator
- * Copyright (©) 2019-2024 OpenTibiaBR <opentibiabr@outlook.com>
+ * Copyright (©) 2019–present OpenTibiaBR <opentibiabr@outlook.com>
  * Repository: https://github.com/opentibiabr/canary
  * License: https://github.com/opentibiabr/canary/blob/main/LICENSE
  * Contributors: https://github.com/opentibiabr/canary/graphs/contributors
@@ -8,9 +8,6 @@
  */
 
 #pragma once
-
-#include "declarations.hpp"
-#include "lib/di/container.hpp"
 
 struct FamiliarEntry {
 	constexpr explicit FamiliarEntry(uint16_t initLookType) :
@@ -38,12 +35,7 @@ public:
 	bool loadFromXml();
 	bool reload();
 
-	std::vector<std::shared_ptr<Familiar>> &getFamiliars(uint16_t vocation) {
-		return familiars[vocation];
-	}
+	std::vector<std::shared_ptr<Familiar>> &getFamiliars(uint16_t vocation);
 
 	[[nodiscard]] std::shared_ptr<Familiar> getFamiliarByLookType(uint16_t vocation, uint16_t lookType) const;
-
-private:
-	std::vector<std::shared_ptr<Familiar>> familiars[VOCATION_LAST + 1];
 };

@@ -1,6 +1,6 @@
 /**
  * Canary - A free and open-source MMORPG server emulator
- * Copyright (©) 2019-2024 OpenTibiaBR <opentibiabr@outlook.com>
+ * Copyright (©) 2019–present OpenTibiaBR <opentibiabr@outlook.com>
  * Repository: https://github.com/opentibiabr/canary
  * License: https://github.com/opentibiabr/canary/blob/main/LICENSE
  * Contributors: https://github.com/opentibiabr/canary/graphs/contributors
@@ -33,7 +33,7 @@ enum Attr_ReadValue {
 	ATTR_READ_END,
 };
 
-enum ReturnValue {
+enum ReturnValue : uint16_t {
 	RETURNVALUE_NOERROR,
 	RETURNVALUE_NOTBOUGHTINSTORE,
 	RETURNVALUE_ITEMCANNOTBEMOVEDTHERE,
@@ -140,34 +140,36 @@ enum ItemGroup_t {
 enum ItemTypes_t {
 	ITEM_TYPE_NONE,
 
-	// Odered to make the cast from protobuf::itemCategory to ItemTypes_t easier.
+	// Ordered to make the cast from protobuf::itemCategory to ItemTypes_t easier.
 	// Do not edit it from Start-End
 	// Start
-	ITEM_TYPE_ARMOR,
-	ITEM_TYPE_AMULET,
-	ITEM_TYPE_BOOTS,
-	ITEM_TYPE_CONTAINER,
-	ITEM_TYPE_DECORATION,
-	ITEM_TYPE_FOOD,
-	ITEM_TYPE_HELMET,
-	ITEM_TYPE_LEGS,
-	ITEM_TYPE_OTHER,
-	ITEM_TYPE_POTION,
-	ITEM_TYPE_RING,
-	ITEM_TYPE_RUNE,
-	ITEM_TYPE_SHIELD,
-	ITEM_TYPE_TOOLS,
-	ITEM_TYPE_VALUABLE,
-	ITEM_TYPE_AMMO,
-	ITEM_TYPE_AXE,
-	ITEM_TYPE_CLUB,
-	ITEM_TYPE_DISTANCE,
-	ITEM_TYPE_SWORD,
-	ITEM_TYPE_WAND,
-	ITEM_TYPE_PREMIUMSCROLL,
-	ITEM_TYPE_TIBIACOIN,
-	ITEM_TYPE_CREATUREPRODUCT,
-	ITEM_TYPE_QUIVER,
+	ITEM_TYPE_ARMOR = 1,
+	ITEM_TYPE_AMULET = 2,
+	ITEM_TYPE_BOOTS = 3,
+	ITEM_TYPE_CONTAINER = 4,
+	ITEM_TYPE_DECORATION = 5,
+	ITEM_TYPE_FOOD = 6,
+	ITEM_TYPE_HELMET = 7,
+	ITEM_TYPE_LEGS = 8,
+	ITEM_TYPE_OTHER = 9,
+	ITEM_TYPE_POTION = 10,
+	ITEM_TYPE_RING = 11,
+	ITEM_TYPE_RUNE = 12,
+	ITEM_TYPE_SHIELD = 13,
+	ITEM_TYPE_TOOLS = 14,
+	ITEM_TYPE_VALUABLE = 15,
+	ITEM_TYPE_AMMO = 16,
+	ITEM_TYPE_AXE = 17,
+	ITEM_TYPE_CLUB = 18,
+	ITEM_TYPE_DISTANCE = 19,
+	ITEM_TYPE_SWORD = 20,
+	ITEM_TYPE_WAND = 21,
+	ITEM_TYPE_PREMIUMSCROLL = 22,
+	ITEM_TYPE_TIBIACOIN = 23,
+	ITEM_TYPE_CREATUREPRODUCT = 24,
+	ITEM_TYPE_QUIVER = 25,
+	ITEM_TYPE_SOULCORES = 26,
+	ITEM_TYPE_FIST = 27,
 	// End
 
 	ITEM_TYPE_DEPOT,
@@ -243,6 +245,7 @@ enum AttrTypes_t {
 	ATTR_STORE_INBOX_CATEGORY = 42,
 	ATTR_OWNER = 43,
 	ATTR_OBTAINCONTAINER = 44,
+	ATTR_MANTRA = 45,
 
 	// Always the last
 	ATTR_NONE = 0
@@ -267,11 +270,13 @@ enum ImbuementTypes_t : int64_t {
 	IMBUEMENT_SKILLBOOST_SHIELDING = 14,
 	IMBUEMENT_SKILLBOOST_DISTANCE = 15,
 	IMBUEMENT_SKILLBOOST_MAGIC_LEVEL = 16,
-	IMBUEMENT_INCREASE_CAPACITY = 17
+	IMBUEMENT_INCREASE_CAPACITY = 17,
+	IMBUEMENT_SKILLBOOST_FIST = 18,
 };
 
 enum class Augment_t : uint8_t {
 	None,
+	Base,
 	PowerfulImpact,
 	StrongImpact,
 	IncreasedDamage,
@@ -458,7 +463,7 @@ enum TileFlags_t : uint32_t {
 	TILESTATE_FLOORCHANGE = TILESTATE_FLOORCHANGE_DOWN | TILESTATE_FLOORCHANGE_NORTH | TILESTATE_FLOORCHANGE_SOUTH | TILESTATE_FLOORCHANGE_EAST | TILESTATE_FLOORCHANGE_WEST | TILESTATE_FLOORCHANGE_SOUTH_ALT | TILESTATE_FLOORCHANGE_EAST_ALT,
 };
 
-enum ZoneType_t {
+enum ZoneType_t : uint8_t {
 	ZONE_PROTECTION,
 	ZONE_NOPVP,
 	ZONE_PVP,
@@ -475,6 +480,7 @@ enum CylinderFlags_t {
 	FLAG_IGNOREFIELDDAMAGE = 1 << 5, // Bypass field damage checks
 	FLAG_IGNORENOTMOVABLE = 1 << 6, // Bypass check for mobility
 	FLAG_IGNOREAUTOSTACK = 1 << 7, // queryDestination will not try to stack items together
+	FLAG_DROPONMAP = 1 << 8, // Drop item on map
 };
 
 enum CylinderLink_t {
@@ -494,6 +500,7 @@ enum ItemParseAttributes_t {
 	ITEM_PARSE_DEFENSE,
 	ITEM_PARSE_EXTRADEF,
 	ITEM_PARSE_ATTACK,
+	ITEM_PARSE_MANTRA,
 	ITEM_PARSE_ROTATETO,
 	ITEM_PARSE_WRAPCONTAINER,
 	ITEM_PARSE_IMBUEMENT,
@@ -618,10 +625,11 @@ enum ItemParseAttributes_t {
 	ITEM_PARSE_USEDBYGUESTS,
 	ITEM_PARSE_SCRIPT,
 	ITEM_PARSE_AUGMENT,
+	ITEM_PARSE_ELEMENTALBOND,
 };
 
 struct ImbuementInfo {
-	Imbuement* imbuement;
+	Imbuement* imbuement {};
 	uint32_t duration = 0;
 };
 
@@ -629,7 +637,7 @@ struct AugmentInfo {
 	AugmentInfo(std::string spellName, Augment_t type, int32_t value) :
 		spellName(std::move(spellName)), type(type), value(value) { }
 
-	std::string spellName;
+	std::string spellName {};
 	Augment_t type;
-	int32_t value;
+	int32_t value {};
 };

@@ -1,6 +1,6 @@
 /**
  * Canary - A free and open-source MMORPG server emulator
- * Copyright (©) 2019-2024 OpenTibiaBR <opentibiabr@outlook.com>
+ * Copyright (©) 2019–present OpenTibiaBR <opentibiabr@outlook.com>
  * Repository: https://github.com/opentibiabr/canary
  * License: https://github.com/opentibiabr/canary/blob/main/LICENSE
  * Contributors: https://github.com/opentibiabr/canary/graphs/contributors
@@ -17,7 +17,7 @@ struct TierInfo {
 };
 
 // Classification class for forging system and market.
-class ItemClassification {
+class ItemClassification final {
 public:
 	ItemClassification() = default;
 	explicit ItemClassification(uint8_t id) :
@@ -32,6 +32,6 @@ public:
 		table.convergenceTransferPrice = convergenceTransferPrice;
 	}
 
-	uint8_t id;
-	std::map<uint8_t, TierInfo> tiers;
+	uint8_t id {};
+	std::map<uint8_t, TierInfo> tiers {};
 };

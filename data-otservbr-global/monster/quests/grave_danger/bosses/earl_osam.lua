@@ -14,7 +14,8 @@ monster.outfit = {
 }
 
 monster.events = {
-	"GraveDangerBossDeath",
+	"earl_osam_transform",
+	"grave_danger_death",
 }
 
 monster.health = 75000
@@ -86,6 +87,7 @@ monster.loot = {
 	{ name = "bullseye potion", minCount = 0, maxCount = 10, chance = 12000 },
 	{ name = "mastermind potion", minCount = 0, maxCount = 10, chance = 12000 },
 	{ name = "berserk potion", minCount = 0, maxCount = 10, chance = 12000 },
+	{ name = "transcendence potion", minCount = 0, maxCount = 10, chance = 12000 },
 	{ name = "piece of draconian steel", minCount = 0, maxCount = 3, chance = 9000 },
 	{ id = 3039, minCount = 0, maxCount = 2, chance = 12000 }, -- red gem
 	{ name = "silver token", minCount = 0, maxCount = 2, chance = 9500 },
@@ -137,19 +139,5 @@ monster.immunities = {
 	{ type = "invisible", condition = true },
 	{ type = "bleed", condition = false },
 }
-
-mType.onThink = function(monster, interval) end
-
-mType.onAppear = function(monster, creature)
-	if monster:getType():isRewardBoss() then
-		monster:setReward(true)
-	end
-end
-
-mType.onDisappear = function(monster, creature) end
-
-mType.onMove = function(monster, creature, fromPosition, toPosition) end
-
-mType.onSay = function(monster, creature, type, message) end
 
 mType:register(monster)

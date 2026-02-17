@@ -1,6 +1,6 @@
 /**
  * Canary - A free and open-source MMORPG server emulator
- * Copyright (©) 2019-2024 OpenTibiaBR <opentibiabr@outlook.com>
+ * Copyright (©) 2019–present OpenTibiaBR <opentibiabr@outlook.com>
  * Repository: https://github.com/opentibiabr/canary
  * License: https://github.com/opentibiabr/canary/blob/main/LICENSE
  * Contributors: https://github.com/opentibiabr/canary/graphs/contributors
@@ -8,8 +8,6 @@
  */
 
 #pragma once
-
-#include "lua/scripts/luascript.hpp"
 
 class ValueWrapper;
 
@@ -25,23 +23,9 @@ using MapType = phmap::flat_hash_map<std::string, std::shared_ptr<ValueWrapper>>
 
 struct lua_State;
 
-class KVFunctions final : LuaScriptInterface {
+class KVFunctions {
 public:
-	static void init(lua_State* L) {
-		registerTable(L, "kv");
-		registerMethod(L, "kv", "scoped", KVFunctions::luaKVScoped);
-		registerMethod(L, "kv", "set", KVFunctions::luaKVSet);
-		registerMethod(L, "kv", "get", KVFunctions::luaKVGet);
-		registerMethod(L, "kv", "keys", KVFunctions::luaKVKeys);
-		registerMethod(L, "kv", "remove", KVFunctions::luaKVRemove);
-
-		registerClass(L, "KV", "");
-		registerMethod(L, "KV", "scoped", KVFunctions::luaKVScoped);
-		registerMethod(L, "KV", "set", KVFunctions::luaKVSet);
-		registerMethod(L, "KV", "get", KVFunctions::luaKVGet);
-		registerMethod(L, "KV", "keys", KVFunctions::luaKVKeys);
-		registerMethod(L, "KV", "remove", KVFunctions::luaKVRemove);
-	}
+	static void init(lua_State* L);
 
 private:
 	static int luaKVScoped(lua_State* L);

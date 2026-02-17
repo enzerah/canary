@@ -14,7 +14,8 @@ monster.outfit = {
 }
 
 monster.events = {
-	"GraveDangerBossDeath",
+	"count_vlarkorth_transform",
+	"grave_danger_death",
 }
 
 monster.health = 75000
@@ -83,6 +84,7 @@ monster.loot = {
 	{ name = "ultimate spirit potion", minCount = 0, maxCount = 20, chance = 32000 },
 	{ name = "bullseye potion", minCount = 0, maxCount = 10, chance = 12000 },
 	{ name = "mastermind potion", minCount = 0, maxCount = 10, chance = 12000 },
+	{ name = "transcendence potion", minCount = 0, maxCount = 10, chance = 12000 },
 	{ name = "silver token", minCount = 0, maxCount = 2, chance = 8000 },
 	{ name = "blue gem", chance = 9000 },
 	{ id = 23542, chance = 5200 }, -- collar of blue plasma
@@ -141,19 +143,5 @@ monster.immunities = {
 	{ type = "invisible", condition = true },
 	{ type = "bleed", condition = false },
 }
-
-mType.onThink = function(monster, interval) end
-
-mType.onAppear = function(monster, creature)
-	if monster:getType():isRewardBoss() then
-		monster:setReward(true)
-	end
-end
-
-mType.onDisappear = function(monster, creature) end
-
-mType.onMove = function(monster, creature, fromPosition, toPosition) end
-
-mType.onSay = function(monster, creature, type, message) end
 
 mType:register(monster)

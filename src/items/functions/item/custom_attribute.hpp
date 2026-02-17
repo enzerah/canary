@@ -1,6 +1,6 @@
 /**
  * Canary - A free and open-source MMORPG server emulator
- * Copyright (©) 2019-2024 OpenTibiaBR <opentibiabr@outlook.com>
+ * Copyright (©) 2019–present OpenTibiaBR <opentibiabr@outlook.com>
  * Repository: https://github.com/opentibiabr/canary
  * License: https://github.com/opentibiabr/canary/blob/main/LICENSE
  * Contributors: https://github.com/opentibiabr/canary/graphs/contributors
@@ -16,10 +16,10 @@ public:
 	CustomAttribute();
 	~CustomAttribute();
 
-	CustomAttribute(const std::string &initStringKey, const int64_t initInt64Value);
-	CustomAttribute(const std::string &initStringKey, const std::string &initStringValue);
-	CustomAttribute(const std::string &initStringKey, const double initDoubleValue);
-	CustomAttribute(const std::string &initStringKey, const bool initBoolValue);
+	CustomAttribute(std::string initStringKey, int64_t initInt64Value);
+	CustomAttribute(std::string initStringKey, const std::string &initStringValue);
+	CustomAttribute(std::string initStringKey, double initDoubleValue);
+	CustomAttribute(std::string initStringKey, bool initBoolValue);
 
 	const std::string &getStringKey() const;
 

@@ -13,16 +13,16 @@ monster.outfit = {
 	lookMount = 0,
 }
 
-monster.events = {
-	"DreamCourtsBossDeath",
-}
-
 monster.health = 850000
 monster.maxHealth = 850000
 monster.race = "blood"
 monster.corpse = 30159
 monster.speed = 125
 monster.manaCost = 0
+
+monster.events = {
+	"dreamCourtsDeath",
+}
 
 monster.changeTarget = {
 	interval = 4000,
@@ -32,7 +32,6 @@ monster.changeTarget = {
 monster.bosstiary = {
 	bossRaceId = 1718,
 	bossRace = RARITY_ARCHFOE,
-	storage = Storage.Quest.U12_00.TheDreamCourts.NightmareBeastTimer,
 }
 
 monster.strategiesTarget = {
@@ -104,6 +103,7 @@ monster.loot = {
 	{ name = "magic sulphur", chance = 8490 },
 	{ name = "mastermind potion", chance = 12900, maxCount = 18 },
 	{ name = "mysterious remains", chance = 93400 },
+	{ name = "transcendence potion", chance = 12900, maxCount = 18 },
 	{ name = "piggy bank", chance = 100000 },
 	{ name = "piggy bank", chance = 94340 },
 	{ name = "platinum coin", chance = 100000, maxCount = 9 },
@@ -115,6 +115,7 @@ monster.loot = {
 	{ name = "soul stone", chance = 4720 },
 	{ name = "supreme health potion", chance = 58060, maxCount = 29 },
 	{ name = "turquoise tendril lantern", chance = 7550 },
+	{ name = "dark vision bandana", chance = 4350 },
 	{ name = "ultimate mana potion", chance = 64519, maxCount = 29 },
 	{ name = "ultimate spirit potion", chance = 58060, maxCount = 24 },
 	{ name = "violet gem", chance = 6450 },
@@ -153,19 +154,5 @@ monster.immunities = {
 	{ type = "invisible", condition = true },
 	{ type = "bleed", condition = false },
 }
-
-mType.onThink = function(monster, interval) end
-
-mType.onAppear = function(monster, creature)
-	if monster:getType():isRewardBoss() then
-		monster:setReward(true)
-	end
-end
-
-mType.onDisappear = function(monster, creature) end
-
-mType.onMove = function(monster, creature, fromPosition, toPosition) end
-
-mType.onSay = function(monster, creature, type, message) end
 
 mType:register(monster)

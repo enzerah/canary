@@ -1,6 +1,6 @@
 /**
  * Canary - A free and open-source MMORPG server emulator
- * Copyright (©) 2019-2024 OpenTibiaBR <opentibiabr@outlook.com>
+ * Copyright (©) 2019–present OpenTibiaBR <opentibiabr@outlook.com>
  * Repository: https://github.com/opentibiabr/canary
  * License: https://github.com/opentibiabr/canary/blob/main/LICENSE
  * Contributors: https://github.com/opentibiabr/canary/graphs/contributors
@@ -24,7 +24,7 @@ struct GuildRank {
 
 using GuildRank_ptr = std::shared_ptr<GuildRank>;
 
-class Guild : public Bankable {
+class Guild final : public Bankable {
 public:
 	Guild(uint32_t initId, std::string initName) :
 		name(std::move(initName)), id(initId) { }
@@ -72,7 +72,7 @@ public:
 		return ranks;
 	}
 
-	GuildRank_ptr getRankById(uint32_t id);
+	GuildRank_ptr getRankById(uint32_t id) const;
 	GuildRank_ptr getRankByName(const std::string &name) const;
 	GuildRank_ptr getRankByLevel(uint8_t level) const;
 	void addRank(uint32_t id, const std::string &name, uint8_t level);

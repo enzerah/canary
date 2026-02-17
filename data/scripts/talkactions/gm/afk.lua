@@ -69,8 +69,8 @@ afkEffect:interval(5000)
 afkEffect:register()
 
 ------------------ Stop AFK Message when moves ------------------
-local callback = EventCallback()
-function callback.playerOnWalk(player, creature, creaturePos, toPos)
+local callback = EventCallback("PlayerOnWalk")
+function callback.playerOnWalk(player, direction)
 	local isAfk = checkIsAFK(player:getId())
 	if isAfk.afk then
 		table.remove(playersAFKs, isAfk.index)

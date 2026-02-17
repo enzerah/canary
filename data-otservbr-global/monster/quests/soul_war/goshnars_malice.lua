@@ -14,7 +14,8 @@ monster.outfit = {
 }
 
 monster.events = {
-	"SoulwarsBossDeath",
+	"SoulWarBossesDeath",
+	"Goshnar's-Malice",
 }
 
 monster.health = 300000
@@ -59,20 +60,11 @@ monster.flags = {
 	canWalkOnEnergy = true,
 	canWalkOnFire = true,
 	canWalkOnPoison = true,
-	pet = false,
 }
 
 monster.light = {
 	level = 0,
 	color = 0,
-}
-
-monster.summon = {
-	maxSummons = 4,
-	summons = {
-		{ name = "dreadful harvester", chance = 40, interval = 1000, count = 2 },
-		{ name = "malicious soul", chance = 30, interval = 1000, count = 2 },
-	},
 }
 
 monster.voices = {
@@ -94,6 +86,7 @@ monster.loot = {
 	{ name = "dragon figurine", chance = 10000, maxCount = 1 },
 	{ name = "bullseye potion", chance = 15000, minCount = 10, maxCount = 25 },
 	{ name = "mastermind potion", chance = 15000, minCount = 10, maxCount = 25 },
+	{ name = "transcendence potion", chance = 15000, minCount = 10, maxCount = 25 },
 	{ name = "berserk potion", chance = 15000, minCount = 10, maxCount = 25 },
 	{ name = "ultimate mana potion", chance = 18000, minCount = 50, maxCount = 100 },
 	{ name = "supreme health potion", chance = 18000, minCount = 50, maxCount = 100 },
@@ -141,18 +134,18 @@ monster.immunities = {
 	{ type = "bleed", condition = false },
 }
 
-mType.onThink = function(monster, interval) end
+local zone = Zone.getByName("boss.goshnar's-malice")
+local zonePositions = zone:getPositions()
 
-mType.onAppear = function(monster, creature)
-	if monster:getType():isRewardBoss() then
-		monster:setReward(true)
+local accumulatedTime = 0
+local desiredInterval = 40000
+mType.onThink = function(monster, interval)
+	accumulatedTime = accumulatedTime + interval
+	-- Execute only after 40 seconds
+	if accumulatedTime >= desiredInterval then
+		monster:createSoulWarWhiteTiles(SoulWarQuest.levers.goshnarsMalice.boss.position, zonePositions)
+		accumulatedTime = 0
 	end
 end
-
-mType.onDisappear = function(monster, creature) end
-
-mType.onMove = function(monster, creature, fromPosition, toPosition) end
-
-mType.onSay = function(monster, creature, type, message) end
 
 mType:register(monster)

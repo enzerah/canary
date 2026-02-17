@@ -1,6 +1,6 @@
 /**
  * Canary - A free and open-source MMORPG server emulator
- * Copyright (©) 2019-2024 OpenTibiaBR <opentibiabr@outlook.com>
+ * Copyright (©) 2019–present OpenTibiaBR <opentibiabr@outlook.com>
  * Repository: https://github.com/opentibiabr/canary
  * License: https://github.com/opentibiabr/canary/blob/main/LICENSE
  * Contributors: https://github.com/opentibiabr/canary/graphs/contributors
@@ -9,22 +9,9 @@
 
 #pragma once
 
-#include "lua/scripts/luascript.hpp"
-
-class GroupFunctions final : LuaScriptInterface {
+class GroupFunctions {
 public:
-	static void init(lua_State* L) {
-		registerSharedClass(L, "Group", "", GroupFunctions::luaGroupCreate);
-		registerMetaMethod(L, "Group", "__eq", GroupFunctions::luaUserdataCompare);
-
-		registerMethod(L, "Group", "getId", GroupFunctions::luaGroupGetId);
-		registerMethod(L, "Group", "getName", GroupFunctions::luaGroupGetName);
-		registerMethod(L, "Group", "getFlags", GroupFunctions::luaGroupGetFlags);
-		registerMethod(L, "Group", "getAccess", GroupFunctions::luaGroupGetAccess);
-		registerMethod(L, "Group", "getMaxDepotItems", GroupFunctions::luaGroupGetMaxDepotItems);
-		registerMethod(L, "Group", "getMaxVipEntries", GroupFunctions::luaGroupGetMaxVipEntries);
-		registerMethod(L, "Group", "hasFlag", GroupFunctions::luaGroupHasFlag);
-	}
+	static void init(lua_State* L);
 
 private:
 	static int luaGroupCreate(lua_State* L);

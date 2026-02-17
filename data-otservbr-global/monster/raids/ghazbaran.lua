@@ -123,6 +123,7 @@ monster.loot = {
 	{ name = "spellbook of lost souls", chance = 16666 },
 	{ name = "spellscroll of prophecies", chance = 25000 },
 	{ name = "spellbook of dark mysteries", chance = 20000 },
+	{ name = "ghazbaran oyoroi", chance = 8333 },
 }
 
 monster.attacks = {
@@ -163,19 +164,5 @@ monster.immunities = {
 	{ type = "invisible", condition = true },
 	{ type = "bleed", condition = false },
 }
-
-mType.onThink = function(monster, interval) end
-
-mType.onAppear = function(monster, creature)
-	if monster:getType():isRewardBoss() then
-		monster:setReward(true)
-	end
-end
-
-mType.onDisappear = function(monster, creature) end
-
-mType.onMove = function(monster, creature, fromPosition, toPosition) end
-
-mType.onSay = function(monster, creature, type, message) end
 
 mType:register(monster)

@@ -1,6 +1,6 @@
 /**
  * Canary - A free and open-source MMORPG server emulator
- * Copyright (©) 2019-2024 OpenTibiaBR <opentibiabr@outlook.com>
+ * Copyright (©) 2019–present OpenTibiaBR <opentibiabr@outlook.com>
  * Repository: https://github.com/opentibiabr/canary
  * License: https://github.com/opentibiabr/canary/blob/main/LICENSE
  * Contributors: https://github.com/opentibiabr/canary/graphs/contributors
@@ -9,11 +9,10 @@
 
 #pragma once
 
-#include "lib/logging/log_with_spd_log.hpp"
 #include "lua/functions/lua_functions_loader.hpp"
 #include "lua/scripts/script_environment.hpp"
 
-class LuaScriptInterface : public LuaFunctionsLoader {
+class LuaScriptInterface : public Lua {
 public:
 	explicit LuaScriptInterface(std::string interfaceName);
 	virtual ~LuaScriptInterface();
@@ -58,12 +57,12 @@ public:
 		return luaState;
 	}
 
-	bool pushFunction(int32_t functionId);
+	virtual bool pushFunction(int32_t functionId) const;
 
-	bool callFunction(int params);
-	void callVoidFunction(int params);
+	virtual bool callFunction(int params) const;
+	virtual void callVoidFunction(int params) const;
 
-	std::string getStackTrace(const std::string &error_desc);
+	std::string getStackTrace(const std::string &error_desc) const;
 
 protected:
 	virtual bool closeState();
@@ -73,7 +72,7 @@ protected:
 	std::map<int32_t, std::string> cacheFiles;
 
 private:
-	std::string getMetricsScope();
+	std::string getMetricsScope() const;
 
 	std::string lastLuaError;
 	std::string interfaceName;

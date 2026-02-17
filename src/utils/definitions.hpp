@@ -1,6 +1,6 @@
 /**
  * Canary - A free and open-source MMORPG server emulator
- * Copyright (©) 2019-2024 OpenTibiaBR <opentibiabr@outlook.com>
+ * Copyright (©) 2019–present OpenTibiaBR <opentibiabr@outlook.com>
  * Repository: https://github.com/opentibiabr/canary
  * License: https://github.com/opentibiabr/canary/blob/main/LICENSE
  * Contributors: https://github.com/opentibiabr/canary/graphs/contributors
@@ -12,6 +12,8 @@
 #ifndef __FUNCTION__
 	#define __FUNCTION__ __func__
 #endif
+
+#define __METRICS_METHOD_NAME__ std::source_location::current().function_name()
 
 #ifndef _CRT_SECURE_NO_WARNINGS
 	#define _CRT_SECURE_NO_WARNINGS

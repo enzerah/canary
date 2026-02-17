@@ -1,6 +1,6 @@
 /**
  * Canary - A free and open-source MMORPG server emulator
- * Copyright (©) 2019-2024 OpenTibiaBR <opentibiabr@outlook.com>
+ * Copyright (©) 2019–present OpenTibiaBR <opentibiabr@outlook.com>
  * Repository: https://github.com/opentibiabr/canary
  * License: https://github.com/opentibiabr/canary/blob/main/LICENSE
  * Contributors: https://github.com/opentibiabr/canary/graphs/contributors
@@ -119,7 +119,7 @@ struct Position {
 namespace std {
 	template <>
 	struct hash<Position> {
-		std::size_t operator()(const Position &p) const {
+		std::size_t operator()(const Position &p) const noexcept {
 			return static_cast<std::size_t>(p.x) | (static_cast<std::size_t>(p.y) << 16) | (static_cast<std::size_t>(p.z) << 32);
 		}
 	};
@@ -127,3 +127,16 @@ namespace std {
 
 std::ostream &operator<<(std::ostream &, const Position &);
 std::ostream &operator<<(std::ostream &, const Direction &);
+
+// Automatic conversion to string from Position
+template <>
+struct fmt::formatter<Position> {
+	constexpr auto parse(format_parse_context &ctx) {
+		return ctx.begin();
+	}
+
+	template <typename FormatContext>
+	auto format(const Position &pos, FormatContext &ctx) const {
+		return format_to(ctx.out(), "({}, {}, {})", pos.x, pos.y, pos.z);
+	}
+};

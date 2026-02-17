@@ -63,6 +63,7 @@ monster.loot = {
 	{ name = "ultimate mana potion", chance = 24300, maxcount = 5 },
 	{ name = "ultimate spirit potion", chance = 25750, maxcount = 4 },
 	{ name = "mastermind potion", chance = 23200, maxcount = 3 },
+	{ name = "transcendence potion", chance = 23200, maxcount = 3 },
 	{ name = "berserk potion", chance = 24800, maxcount = 3 },
 	{ name = "bullseye potion", chance = 23500, maxcount = 3 },
 	{ name = "yellow gem", chance = 26200, maxcount = 5 },
@@ -81,6 +82,7 @@ monster.loot = {
 	{ name = "stitched mutant hide legs", chance = 440 },
 	{ name = "alchemist's boots", chance = 460 },
 	{ name = "mutant bone boots", chance = 400 },
+	{ name = "mutant hide trousers", chance = 400 },
 }
 
 monster.attacks = {
@@ -115,19 +117,5 @@ monster.immunities = {
 	{ type = "invisible", condition = true },
 	{ type = "bleed", condition = false },
 }
-
-mType.onThink = function(monster, interval) end
-
-mType.onAppear = function(monster, creature)
-	if monster:getType():isRewardBoss() then
-		monster:setReward(true)
-	end
-end
-
-mType.onDisappear = function(monster, creature) end
-
-mType.onMove = function(monster, creature, fromPosition, toPosition) end
-
-mType.onSay = function(monster, creature, type, message) end
 
 mType:register(monster)

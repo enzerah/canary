@@ -1,6 +1,6 @@
 /**
  * Canary - A free and open-source MMORPG server emulator
- * Copyright (©) 2019-2024 OpenTibiaBR <opentibiabr@outlook.com>
+ * Copyright (©) 2019–present OpenTibiaBR <opentibiabr@outlook.com>
  * Repository: https://github.com/opentibiabr/canary
  * License: https://github.com/opentibiabr/canary/blob/main/LICENSE
  * Contributors: https://github.com/opentibiabr/canary/graphs/contributors
@@ -9,15 +9,15 @@
 
 #pragma once
 
-#include "creatures/players/player.hpp"
-#include "declarations.hpp"
-#include "lib/di/container.hpp"
-#include "utils/tools.hpp"
+#include "creatures/creatures_definitions.hpp"
+#include "items/items_definitions.hpp"
 
 class Player;
 class Item;
 
 class Imbuement;
+
+constexpr int32_t maxSkillOrStatId = std::max<int32_t>(STAT_LAST, SKILL_LAST);
 
 struct BaseImbuement {
 	BaseImbuement(uint16_t initId, std::string initName, uint32_t initPrice, uint32_t initProtectionPrice, uint32_t initRemoveCost, uint32_t initDuration, uint8_t initPercent) :
@@ -52,15 +52,13 @@ public:
 	Imbuements(const Imbuements &) = delete;
 	Imbuements &operator=(const Imbuements &) = delete;
 
-	static Imbuements &getInstance() {
-		return inject<Imbuements>();
-	}
+	static Imbuements &getInstance();
 
 	Imbuement* getImbuement(uint16_t id);
 
 	BaseImbuement* getBaseByID(uint16_t id);
 	CategoryImbuement* getCategoryByID(uint16_t id);
-	std::vector<Imbuement*> getImbuements(std::shared_ptr<Player> player, std::shared_ptr<Item> item);
+	std::vector<Imbuement*> getImbuements(const std::shared_ptr<Player> &player, const std::shared_ptr<Item> &item);
 
 protected:
 	friend class Imbuement;
@@ -82,46 +80,26 @@ public:
 	Imbuement(uint16_t initId, uint16_t initBaseId) :
 		id(initId), baseid(initBaseId) { }
 
-	uint16_t getID() const {
-		return id;
-	}
+	uint16_t getID() const;
 
-	uint16_t getBaseID() const {
-		return baseid;
-	}
+	uint16_t getBaseID() const;
 
-	uint32_t getStorage() const {
-		return storage;
-	}
+	uint32_t getStorage() const;
 
-	bool isPremium() {
-		return premium;
-	}
-	std::string getName() const {
-		return name;
-	}
-	std::string getDescription() const {
-		return description;
-	}
+	bool isPremium() const;
+	std::string getName() const;
+	std::string getDescription() const;
 
-	std::string getSubGroup() const {
-		return subgroup;
-	}
+	std::string getSubGroup() const;
 
-	uint16_t getCategory() const {
-		return category;
-	}
+	uint16_t getCategory() const;
 
-	const std::vector<std::pair<uint16_t, uint16_t>> &getItems() const {
-		return items;
-	}
+	const std::vector<std::pair<uint16_t, uint16_t>> &getItems() const;
 
-	uint16_t getIconID() {
-		return icon + (baseid - 1);
-	}
+	uint16_t getIconID() const;
 
 	uint16_t icon = 1;
-	int32_t stats[STAT_LAST + 1] = {};
+	int32_t stats[maxSkillOrStatId + 1] = {};
 	int32_t skills[SKILL_LAST + 1] = {};
 	int32_t speed = 0;
 	uint32_t capacity = 0;
@@ -136,10 +114,43 @@ protected:
 	friend class Item;
 
 private:
-	bool premium = false;
-	uint32_t storage = 0;
-	uint16_t id, baseid, category = 0;
-	std::string name, description, subgroup = "";
+	bool premium {};
+	uint32_t storage {};
+	uint16_t id {};
+	uint16_t baseid {};
+	uint16_t category {};
+	std::string name;
+	std::string description;
+	std::string subgroup;
 
 	std::vector<std::pair<uint16_t, uint16_t>> items;
 };
+
+class ImbuementDecay {
+public:
+	// ImbuementDecay tracks timer persistence for items that currently have active imbuements.
+	ImbuementDecay() = default;
+
+	// Non-copyable
+	ImbuementDecay(const ImbuementDecay &) = delete;
+	ImbuementDecay &operator=(const ImbuementDecay &) = delete;
+
+	static ImbuementDecay &getInstance();
+
+	void startImbuementDecay(const std::shared_ptr<Item> &item);
+	void stopImbuementDecay(const std::shared_ptr<Item> &item);
+	void checkImbuementDecay();
+
+private:
+	struct TrackedImbuementItem {
+		std::weak_ptr<Item> item;
+		int64_t lastUpdate = 0;
+	};
+
+	bool canDecayImbuement(const std::shared_ptr<Item> &item, const ImbuementInfo &imbuementInfo) const;
+
+	std::unordered_map<Item*, TrackedImbuementItem> m_itemsToDecay;
+	uint32_t m_eventId { 0 };
+};
+
+constexpr auto g_imbuementDecay = ImbuementDecay::getInstance;

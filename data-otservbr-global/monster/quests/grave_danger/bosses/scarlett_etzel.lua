@@ -16,6 +16,7 @@ monster.outfit = {
 monster.events = {
 	"scarlettThink",
 	"scarlettHealth",
+	"grave_danger_death",
 }
 
 monster.bosstiary = {
@@ -90,6 +91,7 @@ monster.loot = {
 	{ name = "berserk potion", chance = 20300, maxCount = 10 },
 	{ name = "blue gem", chance = 18500, maxCount = 2 },
 	{ name = "bullseye potion", chance = 18500, maxCount = 10 },
+	{ name = "transcendence potion", chance = 18500, maxCount = 10 },
 	{ name = "magma coat", chance = 16600 },
 	{ name = "terra rod", chance = 1100 },
 	{ name = "crystal coin", chance = 9200 },
@@ -111,6 +113,7 @@ monster.loot = {
 	{ name = "cobra sword", chance = 650 },
 	{ name = "cobra wand", chance = 650 },
 	{ name = "cobra amulet", chance = 350 },
+	{ name = "cobra bo", chance = 600 },
 }
 
 monster.attacks = {
@@ -145,19 +148,5 @@ monster.immunities = {
 	{ type = "invisible", condition = true },
 	{ type = "bleed", condition = false },
 }
-
-mType.onThink = function(monster, interval) end
-
-mType.onAppear = function(monster, creature)
-	if monster:getType():isRewardBoss() then
-		monster:setReward(true)
-	end
-end
-
-mType.onDisappear = function(monster, creature) end
-
-mType.onMove = function(monster, creature, fromPosition, toPosition) end
-
-mType.onSay = function(monster, creature, type, message) end
 
 mType:register(monster)

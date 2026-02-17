@@ -245,12 +245,16 @@ local setting = {
 	31614, -- tagralt blade
 	32093, -- meat hammer
 	32616, -- phantasmal axe
+	50163, -- crude umbral katar
+	50164, -- umbral katar
+	50165, -- umbral master katar
+	50168, -- nunchaku of destruction
 }
 
 local destroy = Action()
 
 function destroy.onUse(player, item, fromPosition, target, toPosition, isHotkey)
-	return ActionsLib.destroyItem(player, target, toPosition)
+	return destroyItem(player, target, toPosition)
 end
 
 for index, value in ipairs(setting) do

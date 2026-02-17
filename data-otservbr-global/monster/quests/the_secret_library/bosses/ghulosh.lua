@@ -14,7 +14,7 @@ monster.outfit = {
 }
 
 monster.events = {
-	"SecretLibraryBossDeath",
+	"ghuloshThink",
 }
 
 monster.bosstiary = {
@@ -84,6 +84,7 @@ monster.loot = {
 	{ name = "yellow gem", chance = 90000 },
 	{ name = "wand of voodoo", chance = 90000 },
 	{ name = "mastermind potion", chance = 30000, maxCount = 2 },
+	{ name = "transcendence potion", chance = 30000, maxCount = 2 },
 	{ name = "onyx chip", chance = 30000, maxCount = 12 },
 	{ name = "small diamond", chance = 30000, maxCount = 12 },
 	{ name = "small emerald", chance = 30000, maxCount = 12 },
@@ -95,7 +96,6 @@ monster.loot = {
 	{ name = "butcher's axe", chance = 1000 },
 	{ name = "dreaded cleaver", chance = 1000 },
 	{ name = "mercenary sword", chance = 1000 },
-	{ id = 28341, chance = 1000 }, -- tessellated wall
 	{ name = "slightly rusted shield", chance = 5880 },
 	{ name = "slightly rusted helmet", chance = 35290 },
 	{ name = "epaulette", chance = 500 },
@@ -136,19 +136,5 @@ monster.immunities = {
 	{ type = "invisible", condition = true },
 	{ type = "bleed", condition = false },
 }
-
-mType.onThink = function(monster, interval) end
-
-mType.onAppear = function(monster, creature)
-	if monster:getType():isRewardBoss() then
-		monster:setReward(true)
-	end
-end
-
-mType.onDisappear = function(monster, creature) end
-
-mType.onMove = function(monster, creature, fromPosition, toPosition) end
-
-mType.onSay = function(monster, creature, type, message) end
 
 mType:register(monster)

@@ -1,6 +1,6 @@
 /**
  * Canary - A free and open-source MMORPG server emulator
- * Copyright (©) 2019-2024 OpenTibiaBR <opentibiabr@outlook.com>
+ * Copyright (©) 2019–present OpenTibiaBR <opentibiabr@outlook.com>
  * Repository: https://github.com/opentibiabr/canary
  * License: https://github.com/opentibiabr/canary/blob/main/LICENSE
  * Contributors: https://github.com/opentibiabr/canary/graphs/contributors
@@ -34,13 +34,13 @@ class WaitingList {
 public:
 	WaitingList();
 	static WaitingList &getInstance();
-	bool clientLogin(std::shared_ptr<Player> player);
-	std::size_t getClientSlot(std::shared_ptr<Player> player);
+	bool clientLogin(const std::shared_ptr<Player> &player) const;
+	std::size_t getClientSlot(const std::shared_ptr<Player> &player) const;
 	static std::size_t getTime(std::size_t slot);
 
 private:
-	void cleanupList(WaitList &list);
-	std::size_t getTimeout(std::size_t slot);
-	void addPlayerToList(std::shared_ptr<Player> player);
+	void cleanupList(WaitList &list) const;
+	std::size_t getTimeout(std::size_t slot) const;
+	void addPlayerToList(const std::shared_ptr<Player> &player) const;
 	std::unique_ptr<WaitListInfo> info;
 };

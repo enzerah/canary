@@ -1,6 +1,6 @@
 /**
  * Canary - A free and open-source MMORPG server emulator
- * Copyright (©) 2019-2024 OpenTibiaBR <opentibiabr@outlook.com>
+ * Copyright (©) 2019–present OpenTibiaBR <opentibiabr@outlook.com>
  * Repository: https://github.com/opentibiabr/canary
  * License: https://github.com/opentibiabr/canary/blob/main/LICENSE
  * Contributors: https://github.com/opentibiabr/canary/graphs/contributors
@@ -25,12 +25,12 @@ public:
 private:
 	uint32_t parseBitShift(const std::string &bitShiftStr) const;
 	bool verifyPassword(const std::string &password, const std::string &phash) const;
-	std::vector<uint8_t> base64_decode(const std::string &input) const;
+	static std::vector<uint8_t> base64_decode(const std::string &input);
 
 	static const std::regex re;
 	static const std::string base64_chars;
 	std::string m_const_str;
-	uint32_t m_cost;
-	uint32_t t_cost;
-	uint32_t parallelism;
+	uint32_t m_cost {};
+	uint32_t t_cost {};
+	uint32_t parallelism {};
 };

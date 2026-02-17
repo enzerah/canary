@@ -15,7 +15,7 @@ monster.outfit = {
 
 monster.raceId = 2343
 monster.Bestiary = {
-	class = "Iks",
+	class = "Undead",
 	race = BESTY_RACE_UNDEAD,
 	toKill = 1000,
 	FirstUnlock = 50,
@@ -74,7 +74,8 @@ monster.voices = {
 }
 
 monster.loot = {
-	{ name = "gold coin", chance = 100000, maxCount = 389 },
+	{ name = "gold coin", chance = 100000, maxCount = 89 },
+	{ name = "platinum coin", chance = 100000, maxCount = 3 },
 	{ id = 281, chance = 7100 }, -- giant shimmering pearl (green)
 	{ name = "tiger eye", chance = 6910 },
 	{ name = "strong mana potion", chance = 6360, maxCount = 2 },

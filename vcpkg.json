@@ -9,6 +9,8 @@
     "bext-ut",
     "curl",
     "eventpp",
+    "gtest",
+    "libmariadb",
     "luajit",
     "magic-enum",
     "mio",
@@ -18,25 +20,24 @@
     "spdlog",
     "zlib",
     "bshoshany-thread-pool",
-    {
-      "name": "opentelemetry-cpp",
-      "default-features": true,
-      "features": ["otlp-http", "prometheus"]
-    },
-    {
-      "name": "libmariadb",
-      "features": [
-        "mariadbclient"
-      ]
-    },
-    {
-      "name": "gmp",
-      "platform": "linux"
-    },
-    {
-      "name": "mpir",
-      "platform": "windows"
-    }
+    "atomic-queue",
+    "nlohmann-json",
+    "openssl"
   ],
-  "builtin-baseline": "095ee06e7f60dceef7d713e3f8b1c2eb10d650d7"
+  "features": {
+    "metrics": {
+      "description": "Enable OpenTelemetry metrics exporters",
+      "dependencies": [
+        {
+          "name": "opentelemetry-cpp",
+          "default-features": true,
+          "features": [
+            "otlp-http",
+            "prometheus"
+          ]
+        }
+      ]
+    }
+  },
+  "builtin-baseline": "66c0373dc7fca549e5803087b9487edfe3aca0a1"
 }

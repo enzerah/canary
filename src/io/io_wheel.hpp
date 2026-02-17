@@ -1,22 +1,23 @@
 /**
  * Canary - A free and open-source MMORPG server emulator
- * Copyright (©) 2019-2024 OpenTibiaBR <opentibiabr@outlook.com>
+ * Copyright (©) 2019–present OpenTibiaBR <opentibiabr@outlook.com>
  * Repository: https://github.com/opentibiabr/canary
  * License: https://github.com/opentibiabr/canary/blob/main/LICENSE
  * Contributors: https://github.com/opentibiabr/canary/graphs/contributors
- * Website: https://docs.opentibiabr.org/
+ * Website: https://docs.opentibiabr.com/
  */
 
 #pragma once
 
-// Definitions of wheel of destiny enums
-#include "creatures/players/wheel/wheel_definitions.hpp"
-#include "creatures/players/wheel/wheel_gems.hpp"
-
 #include "creatures/creatures_definitions.hpp"
+#include "creatures/players/components/wheel/wheel_definitions.hpp"
+#include "creatures/players/components/wheel/wheel_spells.hpp"
 
-// It prevents us from including the player.h file
 class Player;
+
+struct PlayerWheelMethodsBonusData;
+
+enum class WheelGemAffinity_t : uint8_t;
 
 /**
  * @brief Represents the bonus data for the wheel of destiny in the game.
@@ -40,7 +41,7 @@ public:
 		};
 
 		struct Revelation {
-			std::array<Stats, static_cast<size_t>(WheelStageEnum_t::TOTAL_COUNT)> stats = {
+			std::array<Stats, magic_enum::enum_count<WheelStageEnum_t>() + 1> stats = {
 				Stats { 4, 4 },
 				Stats { 9, 9 },
 				Stats { 20, 20 }
@@ -68,10 +69,16 @@ public:
 				std::string name;
 			};
 
+			struct Monk {
+				std::array<WheelSpells::Bonus, 3> grade;
+				std::string name;
+			};
+
 			std::array<Druid, 5> druid;
 			std::array<Knight, 5> knight;
 			std::array<Paladin, 5> paladin;
 			std::array<Sorcerer, 5> sorcerer;
+			std::array<Monk, 5> monk;
 		};
 
 		Spells spells;
@@ -226,6 +233,15 @@ private:
 	void initializeSorcererSpells();
 
 	/**
+	 * @brief Initializes the bonus effects for Monk-specific spells in the Wheel system.
+	 *
+	 * This method sets up all Monk spell entries with their respective bonuses
+	 * for each grade (typically grade 1 and 2). These bonuses include healing,
+	 * cooldown reduction, damage, leech effects, area effects, and critical modifiers.
+	 */
+	void initializeMonkSpells();
+
+	/**
 	 * @brief Checks if the number of points is equal to the player's points in the specified slot type.
 	 * @param player The player whose points will be checked.
 	 * @param points The number of points to be compared.
@@ -261,6 +277,14 @@ private:
 	 * @return true if the vocation ID corresponds to a druid, false otherwise.
 	 */
 	bool isDruid(uint8_t vocationId) const;
+
+	/**
+	 * @brief Determines whether the given vocation ID belongs to the Monk class.
+	 *
+	 * @param vocationId The ID of the vocation to check.
+	 * @return true if the vocation is a Monk; false otherwise.
+	 */
+	[[nodiscard]] bool isMonk(uint8_t vocationId) const;
 
 	/**
 	 * @brief Adds a spell to the player's bonus data if the number of points is equal to the player's points in the specified slot type.

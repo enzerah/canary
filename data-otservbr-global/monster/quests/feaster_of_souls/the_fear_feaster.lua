@@ -82,6 +82,7 @@ monster.loot = {
 	{ name = "ultimate spirit potion", chance = 23530, maxCount = 6 },
 	{ name = "bullseye potion", chance = 19610, maxCount = 10 },
 	{ name = "mastermind potion", chance = 19610, maxCount = 10 },
+	{ name = "transcendence potion", chance = 19610, maxCount = 10 },
 	{ name = "death toll", chance = 13730, maxCount = 2 },
 	{ name = "ivory comb", chance = 13730 },
 	{ name = "angel figurine", chance = 11760 },
@@ -135,19 +136,5 @@ monster.immunities = {
 	{ type = "invisible", condition = true },
 	{ type = "bleed", condition = false },
 }
-
-mType.onThink = function(monster, interval) end
-
-mType.onAppear = function(monster, creature)
-	if monster:getType():isRewardBoss() then
-		monster:setReward(true)
-	end
-end
-
-mType.onDisappear = function(monster, creature) end
-
-mType.onMove = function(monster, creature, fromPosition, toPosition) end
-
-mType.onSay = function(monster, creature, type, message) end
 
 mType:register(monster)

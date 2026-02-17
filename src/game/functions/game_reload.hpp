@@ -1,6 +1,6 @@
 /**
  * Canary - A free and open-source MMORPG server emulator
- * Copyright (©) 2019-2024 OpenTibiaBR <opentibiabr@outlook.com>
+ * Copyright (©) 2019–present OpenTibiaBR <opentibiabr@outlook.com>
  * Repository: https://github.com/opentibiabr/canary
  * License: https://github.com/opentibiabr/canary/blob/main/LICENSE
  * Contributors: https://github.com/opentibiabr/canary/graphs/contributors
@@ -8,10 +8,6 @@
  */
 
 #pragma once
-
-#include "game/game.hpp"
-
-class Game;
 
 enum class Reload_t : uint8_t {
 	RELOAD_TYPE_NONE,
@@ -37,7 +33,7 @@ enum class Reload_t : uint8_t {
 	RELOAD_TYPE_LAST
 };
 
-class GameReload : public Game {
+class GameReload {
 public:
 	GameReload();
 	~GameReload();
@@ -46,9 +42,7 @@ public:
 	GameReload(const GameReload &) = delete;
 	GameReload &operator=(const GameReload &) = delete;
 
-	static GameReload &getInstance() {
-		return inject<GameReload>();
-	}
+	static GameReload &getInstance();
 
 	static bool init(Reload_t reloadType);
 	static uint8_t getReloadNumber(Reload_t reloadTypes);

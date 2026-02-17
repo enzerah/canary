@@ -1,6 +1,6 @@
 /**
  * Canary - A free and open-source MMORPG server emulator
- * Copyright (©) 2019-2024 OpenTibiaBR <opentibiabr@outlook.com>
+ * Copyright (©) 2019–present OpenTibiaBR <opentibiabr@outlook.com>
  * Repository: https://github.com/opentibiabr/canary
  * License: https://github.com/opentibiabr/canary/blob/main/LICENSE
  * Contributors: https://github.com/opentibiabr/canary/graphs/contributors
@@ -8,37 +8,6 @@
  */
 
 #pragma once
-
-// Enums
-enum Icons_t {
-	ICON_POISON = 1 << 0,
-	ICON_BURN = 1 << 1,
-	ICON_ENERGY = 1 << 2,
-	ICON_DRUNK = 1 << 3,
-	ICON_MANASHIELD = 1 << 4,
-	ICON_PARALYZE = 1 << 5,
-	ICON_HASTE = 1 << 6,
-	ICON_SWORDS = 1 << 7,
-	ICON_DROWNING = 1 << 8,
-	ICON_FREEZING = 1 << 9,
-	ICON_DAZZLED = 1 << 10,
-	ICON_CURSED = 1 << 11,
-	ICON_PARTY_BUFF = 1 << 12,
-	ICON_REDSWORDS = 1 << 13,
-	ICON_PIGEON = 1 << 14,
-	ICON_BLEEDING = 1 << 15,
-	ICON_LESSERHEX = 1 << 16,
-	ICON_INTENSEHEX = 1 << 17,
-	ICON_GREATERHEX = 1 << 18,
-	ICON_ROOTED = 1 << 19,
-	ICON_FEARED = 1 << 20,
-	ICON_GOSHNAR1 = 1 << 21,
-	ICON_GOSHNAR2 = 1 << 22,
-	ICON_GOSHNAR3 = 1 << 23,
-	ICON_GOSHNAR4 = 1 << 24,
-	ICON_GOSHNAR5 = 1 << 25,
-	ICON_NEWMANASHIELD = 1 << 26,
-};
 
 enum WieldInfo_t {
 	WIELDINFO_NONE = 0,
@@ -48,7 +17,7 @@ enum WieldInfo_t {
 	WIELDINFO_PREMIUM = 1 << 3,
 };
 
-enum SpawnType_t {
+enum SpawnType_t : uint8_t {
 	RESPAWN_IN_ALL = 0,
 	RESPAWN_IN_DAY = 1,
 	RESPAWN_IN_NIGHT = 2,
@@ -238,6 +207,43 @@ enum MagicEffectClasses : uint16_t {
 
 	CONST_ME_LOOT_HIGHLIGHT = 252,
 
+	// 13.40
+	CONST_ME_MELTING_CREAM = 263,
+	CONST_ME_REAPER = 264,
+	CONST_ME_POWERFUL_HEARTS = 265,
+	CONST_ME_CREAM = 266,
+	CONST_ME_GENTLE_BUBBLE = 267,
+	CONST_ME_STARBURST = 268,
+	CONST_ME_SIRUP = 269,
+	CONST_ME_CACAO = 270,
+	CONST_ME_CANDY_FLOSS = 271,
+
+	CONST_ME_HITAREA_GREEN = 272,
+	CONST_ME_HITAREA_RED = 273,
+	CONST_ME_HITAREA_BLUE = 274,
+	CONST_ME_HITAREA_ORANGE = 275,
+
+	CONST_ME_WHIRLWIND_BLOW_WHITE = 276,
+	CONST_ME_WHIRLWIND_BLOW_GREEN = 277,
+	CONST_ME_WHIRLWIND_BLOW_PINK = 278,
+
+	CONST_ME_PULSE_WHITE = 279,
+	CONST_ME_PULSE_GREEN = 280,
+	CONST_ME_PULSE_PINK = 281,
+
+	CONST_ME_CLAW_WHITE = 282,
+	CONST_ME_CLAW_GREEN = 283,
+	CONST_ME_CLAW_PINK = 284,
+
+	CONST_ME_BLOW_WHITE = 285,
+	CONST_ME_BLOW_GREEN = 286,
+	CONST_ME_BLOW_BLUE = 287,
+	CONST_ME_BLOW_PINK = 288,
+
+	CONST_ME_OUTBURST_WHITE = 289,
+	CONST_ME_OUTBURST_GREEN = 290,
+	CONST_ME_OUTBURST_PINK = 291,
+
 	CONST_ME_LAST
 };
 
@@ -303,7 +309,11 @@ enum ShootType_t : uint8_t {
 	CONST_ANI_SPECTRALBOLT = 58,
 	CONST_ANI_ROYALSTAR = 59,
 
-	CONST_ANI_LAST = CONST_ANI_ROYALSTAR,
+	// 13.40
+	CONST_ANI_CANDYCANE = 61,
+	CONST_ANI_CHERRYBOMB = 62,
+
+	CONST_ANI_LAST = CONST_ANI_CHERRYBOMB,
 
 	// for internal use, don't send to client
 	CONST_ANI_WEAPONTYPE = 0xFE, // 254
@@ -379,23 +389,25 @@ enum Fluids_t : uint8_t {
 	FLUID_NONE = 0, /* Blue */
 	FLUID_WATER = 1, /* Blue */
 	FLUID_WINE = 2, /* Purple */
-	FLUID_BEER = 3, /* Brown */
-	FLUID_MUD = 4, /* Brown */
+	FLUID_BEER = 3, /* Orange */
+	FLUID_MUD = 4, /* Orange */
 	FLUID_BLOOD = 5, /* Red */
 	FLUID_SLIME = 6, /* Green */
-	FLUID_OIL = 7, /* Brown */
+	FLUID_OIL = 7, /* Orange */
 	FLUID_URINE = 8, /* Yellow */
 	FLUID_MILK = 9, /* White */
 	FLUID_MANA = 10, /* Purple */
 	FLUID_LIFE = 11, /* Red */
 	FLUID_LEMONADE = 12, /* Yellow */
-	FLUID_RUM = 13, /* Brown */
+	FLUID_RUM = 13, /* Orange */
 	FLUID_FRUITJUICE = 14, /* Yellow */
 	FLUID_COCONUTMILK = 15, /* White */
-	FLUID_MEAD = 16, /* Brown */
-	FLUID_TEA = 17, /* Brown */
-	FLUID_INK = 18 /* Black */
-	// 12.85 last fluid is 18, 19+ is a loop from 0 to 18 over and over again
+	FLUID_MEAD = 16, /* Orange */
+	FLUID_TEA = 17, /* Orange */
+	FLUID_INK = 18, /* Black */
+	FLUID_CANDY = 19, /* Red with white pieces */
+	FLUID_CHOCOLATE = 20, /* Brown */
+	// 13.40 last fluid is 20, 21+ is a loop from 0 to 20 over and over again
 };
 
 enum SquareColor_t : uint8_t {
@@ -425,15 +437,16 @@ enum TextColor_t : uint8_t {
 };
 
 enum WeaponType_t : uint8_t {
-	WEAPON_NONE,
-	WEAPON_SWORD,
-	WEAPON_CLUB,
-	WEAPON_AXE,
-	WEAPON_SHIELD,
-	WEAPON_DISTANCE,
-	WEAPON_WAND,
-	WEAPON_AMMO,
-	WEAPON_MISSILE,
+	WEAPON_NONE = 0,
+	WEAPON_FIST = 9,
+	WEAPON_SWORD = 1,
+	WEAPON_CLUB = 2,
+	WEAPON_AXE = 3,
+	WEAPON_SHIELD = 4,
+	WEAPON_DISTANCE = 5,
+	WEAPON_WAND = 6,
+	WEAPON_AMMO = 7,
+	WEAPON_MISSILE = 8,
 };
 
 enum Ammo_t : uint8_t {
@@ -505,7 +518,7 @@ enum NameEval_t : uint8_t {
 
 enum ItemID_t : uint16_t {
 	ITEM_BROWSEFIELD = 470, // for internal use
-	ITEM_SUPPLY_STASH_INDEX = 1, // for internal use
+	ITEM_STASH_INDEX = 1, // for internal use
 	ITEM_DEPOT_NULL = 22796, // for internal use - Actual Item ID: 168
 	ITEM_DECORATION_KIT = 23398, // For internal use (wrap item)
 	ITEM_DOCUMENT_RO = 2834, // Read-only
@@ -558,6 +571,7 @@ enum ItemID_t : uint16_t {
 	ITEM_WILDGROWTH_SAFE = 10182,
 
 	ITEM_BAG = 2853,
+	ITEM_BACKPACK = 2854,
 	ITEM_SHOPPING_BAG = 21411,
 
 	ITEM_GOLD_COIN = 3031,
@@ -576,7 +590,7 @@ enum ItemID_t : uint16_t {
 	ITEM_INBOX = 12902,
 	ITEM_MARKET = 12903,
 	ITEM_STORE_INBOX = 23396,
-	ITEM_SUPPLY_STASH = 28750,
+	ITEM_STASH = 28750,
 
 	ITEM_MALE_CORPSE = 4240,
 	ITEM_FEMALE_CORPSE = 4247,
@@ -660,6 +674,11 @@ enum ItemID_t : uint16_t {
 	ITEM_BATHTUB_FILLED = 26077,
 	ITEM_BATHTUB_FILLED_NOTMOVABLE = 26100,
 
+	ITEM_LESSER_FRAGMENT = 46625,
+	ITEM_GREATER_FRAGMENT = 46626,
+
+	ITEM_SANCTUARY = 49890,
+
 	ITEM_NONE = 0
 };
 
@@ -709,17 +728,6 @@ enum class PlayerFlags_t : uint8_t {
 	FlagLast
 };
 
-enum Blessings_t : uint8_t {
-	TWIST_OF_FATE = 1,
-	WISDOM_OF_SOLITUDE = 2,
-	SPARK_OF_THE_PHOENIX = 3,
-	FIRE_OF_THE_SUNS = 4,
-	SPIRITUAL_SHIELDING = 5,
-	EMBRACE_OF_TIBIA = 6,
-	BLOOD_OF_THE_MOUNTAIN = 7,
-	HEARTH_OF_THE_MOUNTAIN = 8,
-};
-
 enum BedItemPart_t : uint8_t {
 	BED_NONE_PART,
 	BED_PILLOW_PART,
@@ -738,6 +746,9 @@ enum class AttrSubId_t {
 	JeanPierreFishing,
 	BloodRageProtector,
 	Sharpshooter,
+	MentorOther,
+	Sanctuary,
+	VirtueOfJustice,
 };
 
 enum Concoction_t : uint16_t {
@@ -761,4 +772,21 @@ enum Concoction_t : uint16_t {
 	HolyAmplification = 36740,
 	DeathAmplification = 36741,
 	PhysicalAmplification = 36742,
+};
+
+enum Screenshot_t : uint8_t {
+	SCREENSHOT_TYPE_NONE = 0,
+	SCREENSHOT_TYPE_ACHIEVEMENT = 1,
+	SCREENSHOT_TYPE_BESTIARYENTRYCOMPLETED = 2,
+	SCREENSHOT_TYPE_BESTIARYENTRYUNLOCKED = 3,
+	SCREENSHOT_TYPE_BOSSDEFEATED = 4,
+	SCREENSHOT_TYPE_DEATHPVE = 5,
+	SCREENSHOT_TYPE_DEATHPVP = 6,
+	SCREENSHOT_TYPE_LEVELUP = 7,
+	SCREENSHOT_TYPE_PLAYERKILLASSIST = 8,
+	SCREENSHOT_TYPE_PLAYERKILL = 9,
+	SCREENSHOT_TYPE_PLAYERATTACKING = 10,
+	SCREENSHOT_TYPE_TREASUREFOUND = 11,
+	SCREENSHOT_TYPE_SKILLUP = 12,
+	SCREENSHOT_TYPE_GIFTOFLIFE = 13,
 };

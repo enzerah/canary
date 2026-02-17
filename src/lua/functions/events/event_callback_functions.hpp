@@ -1,6 +1,6 @@
 /**
  * Canary - A free and open-source MMORPG server emulator
- * Copyright (©) 2019-2024 OpenTibiaBR <opentibiabr@outlook.com>
+ * Copyright (©) 2019–present OpenTibiaBR <opentibiabr@outlook.com>
  * Repository: https://github.com/opentibiabr/canary
  * License: https://github.com/opentibiabr/canary/blob/main/LICENSE
  * Contributors: https://github.com/opentibiabr/canary/graphs/contributors
@@ -9,8 +9,6 @@
 
 #pragma once
 
-#include "lua/scripts/luascript.hpp"
-
 /**
  * @class EventCallbackFunctions
  * @brief Provides a set of static functions for working with Event Callbacks in Lua.
@@ -18,7 +16,7 @@
  * @details This class encapsulates the Lua binding functions related to event callbacks,
  * allowing for interaction between the C++ codebase and Lua scripts.
  */
-class EventCallbackFunctions : public LuaScriptInterface {
+class EventCallbackFunctions {
 public:
 	/**
 	 * @brief Initializes the Lua state with the event callback functions.

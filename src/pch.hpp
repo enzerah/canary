@@ -1,6 +1,6 @@
 /**
  * Canary - A free and open-source MMORPG server emulator
- * Copyright (©) 2019-2024 OpenTibiaBR <opentibiabr@outlook.com>
+ * Copyright (©) 2019–present OpenTibiaBR <opentibiabr@outlook.com>
  * Repository: https://github.com/opentibiabr/canary
  * License: https://github.com/opentibiabr/canary/blob/main/LICENSE
  * Contributors: https://github.com/opentibiabr/canary/graphs/contributors
@@ -46,6 +46,9 @@
 #include <cmath>
 #include <mutex>
 #include <stack>
+#include <source_location>
+#include <span>
+#include <compare>
 
 // --------------------
 // System Includes
@@ -81,20 +84,20 @@
 #include <fmt/core.h>
 #include <fmt/format.h>
 #include <fmt/args.h>
+#include <fmt/ranges.h>
 
 // FMT Custom Formatter for Enums
 template <typename E>
-struct fmt::formatter<E, std::enable_if_t<std::is_enum_v<E>, char>> : formatter<std::underlying_type_t<E>> {
-	template <typename FormatContext>
-	auto format(E e, FormatContext &ctx) {
-		return formatter<std::underlying_type_t<E>>::format(
-			static_cast<std::underlying_type_t<E>>(e), ctx
-		);
-	}
-};
+std::enable_if_t<std::is_enum_v<E>, std::underlying_type_t<E>>
+format_as(E e) {
+	return static_cast<std::underlying_type_t<E>>(e);
+}
 
-// GMP
-#include <gmp.h>
+// OpenSSL
+#include <openssl/bn.h>
+#include <openssl/rsa.h>
+#include <openssl/pem.h>
+#include <openssl/err.h>
 
 // LUA
 #if __has_include("luajit/lua.hpp")
@@ -117,7 +120,7 @@ struct fmt::formatter<E, std::enable_if_t<std::is_enum_v<E>, char>> : formatter<
  */
 #define MAGIC_ENUM_RANGE_MIN -500
 #define MAGIC_ENUM_RANGE_MAX 500
-#include <magic_enum.hpp>
+#include <magic_enum/magic_enum.hpp>
 
 // Memory Mapped File
 #include <mio/mmap.hpp>
@@ -171,17 +174,5 @@ struct fmt::formatter<E, std::enable_if_t<std::is_enum_v<E>, char>> : formatter<
 
 #include "lua/global/shared_object.hpp"
 
-constexpr std::string_view methodName(const char* s) {
-	std::string_view prettyFunction(s);
-	size_t bracket = prettyFunction.rfind('(');
-	size_t space = prettyFunction.rfind(' ', bracket) + 1;
-	return prettyFunction.substr(space, bracket - space);
-}
-
-#if defined(__GNUC__) || defined(__clang__)
-	#define __METHOD_NAME__ methodName(__PRETTY_FUNCTION__)
-#elif defined(_MSC_VER)
-	#define __METHOD_NAME__ methodName(__FUNCSIG__)
-#else
-	#error "Compiler not supported"
-#endif
+#include "account/account_info.hpp"
+#include "config/config_enums.hpp"

@@ -1,6 +1,6 @@
 /**
  * Canary - A free and open-source MMORPG server emulator
- * Copyright (©) 2019-2024 OpenTibiaBR <opentibiabr@outlook.com>
+ * Copyright (©) 2019–present OpenTibiaBR <opentibiabr@outlook.com>
  * Repository: https://github.com/opentibiabr/canary
  * License: https://github.com/opentibiabr/canary/blob/main/LICENSE
  * Contributors: https://github.com/opentibiabr/canary/graphs/contributors
@@ -9,9 +9,7 @@
 
 #pragma once
 
-#include "lua/scripts/luascript.hpp"
-
-class LoggerFunctions final : public LuaScriptInterface {
+class LoggerFunctions {
 public:
 	static void init(lua_State* L);
 

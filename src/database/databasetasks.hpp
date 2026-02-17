@@ -1,6 +1,6 @@
 /**
  * Canary - A free and open-source MMORPG server emulator
- * Copyright (©) 2019-2024 OpenTibiaBR <opentibiabr@outlook.com>
+ * Copyright (©) 2019–present OpenTibiaBR <opentibiabr@outlook.com>
  * Repository: https://github.com/opentibiabr/canary
  * License: https://github.com/opentibiabr/canary/blob/main/LICENSE
  * Contributors: https://github.com/opentibiabr/canary/graphs/contributors
@@ -22,8 +22,8 @@ public:
 
 	static DatabaseTasks &getInstance();
 
-	void execute(const std::string &query, std::function<void(DBResult_ptr, bool)> callback = nullptr);
-	void store(const std::string &query, std::function<void(DBResult_ptr, bool)> callback = nullptr);
+	void execute(const std::string &query, const std::function<void(DBResult_ptr, bool)> &callback = nullptr);
+	void store(const std::string &query, const std::function<void(DBResult_ptr, bool)> &callback = nullptr);
 
 private:
 	Database &db;

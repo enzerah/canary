@@ -86,6 +86,7 @@ monster.loot = {
 	{ id = 32626, chance = 12000 }, -- amber
 	{ id = 7439, chance = 12000, minCount = 6, maxCount = 15 }, -- berserk potion
 	{ id = 7440, chance = 12000, minCount = 4, maxCount = 15 }, -- mastermind potion
+	{ id = 51302, chance = 12000, minCount = 4, maxCount = 15 }, -- transcendence potion
 	{ id = 32703, chance = 8000, minCount = 1, maxCount = 3 }, -- death toll
 	{ id = 32589, chance = 4000 }, -- angel figurine
 	{ id = 32774, chance = 4000 }, -- cursed bone
@@ -132,19 +133,5 @@ monster.immunities = {
 	{ type = "invisible", condition = true },
 	{ type = "bleed", condition = false },
 }
-
-mType.onThink = function(monster, interval) end
-
-mType.onAppear = function(monster, creature)
-	if monster:getType():isRewardBoss() then
-		monster:setReward(true)
-	end
-end
-
-mType.onDisappear = function(monster, creature) end
-
-mType.onMove = function(monster, creature, fromPosition, toPosition) end
-
-mType.onSay = function(monster, creature, type, message) end
 
 mType:register(monster)

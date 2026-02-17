@@ -1,13 +1,11 @@
 /**
  * Canary - A free and open-source MMORPG server emulator
- * Copyright (©) 2019-2024 OpenTibiaBR <opentibiabr@outlook.com>
+ * Copyright (©) 2019–present OpenTibiaBR <opentibiabr@outlook.com>
  * Repository: https://github.com/opentibiabr/canary
  * License: https://github.com/opentibiabr/canary/blob/main/LICENSE
  * Contributors: https://github.com/opentibiabr/canary/graphs/contributors
  * Website: https://docs.opentibiabr.com/
  */
-
-#include "pch.hpp"
 
 #include "kv/value_wrapper_proto.hpp"
 
@@ -33,14 +31,14 @@ namespace ProtoHelpers {
 	}
 
 	void setProtoArrayValue(Canary::protobuf::kv::ValueWrapper &protoValue, const ArrayType &arg) {
-		auto arrayValue = protoValue.mutable_array_value();
+		const auto arrayValue = protoValue.mutable_array_value();
 		for (const auto &elem : arg) {
 			*arrayValue->add_values() = ProtoSerializable::toProto(elem);
 		}
 	}
 
 	void setProtoMapValue(Canary::protobuf::kv::ValueWrapper &protoValue, const MapType &arg) {
-		auto mapValue = protoValue.mutable_map_value();
+		const auto mapValue = protoValue.mutable_map_value();
 		for (const auto &[key, value] : arg) {
 			auto* elem = mapValue->add_items();
 			elem->set_key(key);

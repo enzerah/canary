@@ -1,6 +1,6 @@
 /**
  * Canary - A free and open-source MMORPG server emulator
- * Copyright (©) 2019-2024 OpenTibiaBR <opentibiabr@outlook.com>
+ * Copyright (©) 2019–present OpenTibiaBR <opentibiabr@outlook.com>
  * Repository: https://github.com/opentibiabr/canary
  * License: https://github.com/opentibiabr/canary/blob/main/LICENSE
  * Contributors: https://github.com/opentibiabr/canary/graphs/contributors
@@ -20,6 +20,12 @@
 
 class EventFunctions final : LuaScriptInterface {
 public:
+	explicit EventFunctions(lua_State* L) :
+		LuaScriptInterface("EventFunctions") {
+		init(L);
+	}
+	~EventFunctions() override = default;
+
 	static void init(lua_State* L) {
 		ActionFunctions::init(L);
 		CreatureEventFunctions::init(L);
@@ -30,6 +36,4 @@ public:
 		EventCallbackFunctions::init(L);
 		/* Move, Creature, Talk, Global events goes all here */
 	}
-
-private:
 };

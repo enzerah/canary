@@ -15,7 +15,7 @@ monster.outfit = {
 
 monster.raceId = 2345
 monster.Bestiary = {
-	class = "Iks",
+	class = "Undead",
 	race = BESTY_RACE_UNDEAD,
 	toKill = 1000,
 	FirstUnlock = 50,
@@ -76,7 +76,8 @@ monster.voices = {
 }
 
 monster.loot = {
-	{ name = "gold coin", chance = 100000, maxCount = 382 },
+	{ name = "gold coin", chance = 100000, maxCount = 82 },
+	{ name = "platinum coin", chance = 100000, maxCount = 3 },
 	{ name = "violet crystal shard", chance = 15870 },
 	{ name = "green crystal splinter", chance = 12350 },
 	{ name = "small sapphire", chance = 9940 },

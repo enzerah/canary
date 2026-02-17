@@ -1,6 +1,6 @@
 /**
  * Canary - A free and open-source MMORPG server emulator
- * Copyright (©) 2019-2024 OpenTibiaBR <opentibiabr@outlook.com>
+ * Copyright (©) 2019–present OpenTibiaBR <opentibiabr@outlook.com>
  * Repository: https://github.com/opentibiabr/canary
  * License: https://github.com/opentibiabr/canary/blob/main/LICENSE
  * Contributors: https://github.com/opentibiabr/canary/graphs/contributors
@@ -14,7 +14,7 @@
 class NetworkMessage;
 class OutputMessage;
 
-class ProtocolLogin : public Protocol {
+class ProtocolLogin final : public Protocol {
 public:
 	// static protocol information
 	enum { SERVER_SENDS_FIRST = false };
@@ -24,15 +24,15 @@ public:
 		return "login protocol";
 	}
 
-	explicit ProtocolLogin(Connection_ptr loginConnection) :
+	explicit ProtocolLogin(const Connection_ptr &loginConnection) :
 		Protocol(loginConnection) { }
 
-	void onRecvFirstMessage(NetworkMessage &msg);
+	void onRecvFirstMessage(NetworkMessage &msg) override;
 
 private:
-	void disconnectClient(const std::string &message);
+	void disconnectClient(const std::string &message) const;
 
-	void getCharacterList(const std::string &accountDescriptor, const std::string &password);
+	void getCharacterList(const std::string &accountDescriptor, const std::string &password) const;
 
 	bool oldProtocol = false;
 };

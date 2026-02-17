@@ -1,17 +1,16 @@
 /**
  * Canary - A free and open-source MMORPG server emulator
- * Copyright (©) 2019-2024 OpenTibiaBR <opentibiabr@outlook.com>
+ * Copyright (©) 2019–present OpenTibiaBR <opentibiabr@outlook.com>
  * Repository: https://github.com/opentibiabr/canary
  * License: https://github.com/opentibiabr/canary/blob/main/LICENSE
  * Contributors: https://github.com/opentibiabr/canary/graphs/contributors
  * Website: https://docs.opentibiabr.com/
  */
 
-#include "pch.hpp"
+#include "io/ioguild.hpp"
 
 #include "database/database.hpp"
 #include "creatures/players/grouping/guild.hpp"
-#include "io/ioguild.hpp"
 
 std::shared_ptr<Guild> IOGuild::loadGuild(uint32_t guildId) {
 	Database &db = Database::getInstance();
@@ -33,7 +32,7 @@ std::shared_ptr<Guild> IOGuild::loadGuild(uint32_t guildId) {
 	return nullptr;
 }
 
-void IOGuild::saveGuild(const std::shared_ptr<Guild> guild) {
+void IOGuild::saveGuild(const std::shared_ptr<Guild> &guild) {
 	if (!guild) {
 		return;
 	}
@@ -68,7 +67,7 @@ void IOGuild::getWarList(uint32_t guildId, GuildWarVector &guildWarVector) {
 	}
 
 	do {
-		uint32_t guild1 = result->getNumber<uint32_t>("guild1");
+		auto guild1 = result->getNumber<uint32_t>("guild1");
 		if (guildId != guild1) {
 			guildWarVector.push_back(guild1);
 		} else {
